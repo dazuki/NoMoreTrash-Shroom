@@ -35,14 +35,14 @@
   <!-- Mono Configuration (netstandard2.1) -->
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
     <NoWarn>$(NoWarn);NU1605;CS1701;CS1702;MSB3277</NoWarn>
-    <DefineConstants>$(DefineConstants);Mono</DefineConstants>
+    <DefineConstants>Mono</DefineConstants>
     <TargetName>NoMoreTrash.Mono</TargetName>
   </PropertyGroup>
 
   <!-- IL2CPP Configuration (net6.0) -->
   <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <NoWarn>$(NoWarn);NU1605;CS1701;CS1702;MSB3277</NoWarn>
-    <DefineConstants>$(DefineConstants);IL2CPP</DefineConstants>
+    <DefineConstants>IL2CPP</DefineConstants>
     <TargetName>NoMoreTrash.Il2cpp</TargetName>
   </PropertyGroup>
 
@@ -110,6 +110,10 @@
     </Reference>
     <Reference Include="Il2CppNewtonsoft.Json">
       <HintPath>$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/Il2CppNewtonsoft.Json.dll</HintPath>
+    </Reference>
+    <!-- Optional Mod Manager Reference -->
+    <Reference Include="ModManager&amp;PhoneApp">
+      <HintPath>$(IL2CPPGamePath)/Mods/ModManager&amp;PhoneApp.dll</HintPath>
     </Reference>
   </ItemGroup>
 

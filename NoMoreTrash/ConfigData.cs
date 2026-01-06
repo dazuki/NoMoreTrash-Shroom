@@ -49,7 +49,7 @@ namespace NoMoreTrash
 
         public ConfigData()
         {
-            clearTrash = MelonPreferences.CreateCategory("ClearTrash");
+            clearTrash = MelonPreferences.CreateCategory("NoMoreTrash-Shroom", "No More Trash Settings");
 
             // Initialize entries
             soilbag = clearTrash.CreateEntry<bool>("soilbag", true);
@@ -90,10 +90,10 @@ namespace NoMoreTrash
             clearTrash.SetFilePath("UserData/NoTrashMod.cfg");
             clearTrash.SaveToFile();
 
-            InitializeTrashDictionary();
+            Reload();
         }
 
-        private void InitializeTrashDictionary()
+        public void Reload()
         {
             TrashItems = new Dictionary<string, bool>();
 
