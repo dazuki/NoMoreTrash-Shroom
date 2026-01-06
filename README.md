@@ -1,5 +1,5 @@
 > [!IMPORTANT]
-> This mod is a fork of the original **No More Trash** mod by Voidane for Schedule 1, providing compatibility with the **Shroom update** until the official version is updated.
+> This mod is a fork of the original **No More Trash** mod by Voidane for Schedule I, providing compatibility with the **Shroom update** until the official version is updated.
 
 <div align="center">
 

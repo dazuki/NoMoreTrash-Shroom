@@ -14,7 +14,7 @@ using ScheduleOne.Trash;
 using Il2CppScheduleOne.Trash;
 #endif
 
-[assembly: MelonInfo(typeof(NoMoreTrashMod), "NoMoreTrash-Shroom", "1.0.2a-Shroom", "Voidane")]
+[assembly: MelonInfo(typeof(NoMoreTrashMod), "NoMoreTrash-Shroom", "1.0.2a-Shroom", "Voidane (Shroom Update by DazUki)")]
 [assembly: MelonGame("TVGS", "Schedule I")]
 
 namespace NoMoreTrash
@@ -24,16 +24,17 @@ namespace NoMoreTrash
         public static ConfigData configData;
 
         private const string versionCurrent = "1.0.2a-Shroom";
-        private const string versionMostUpToDateURL = "https://raw.githubusercontent.com/Voidane/NoMoreTrash/refs/heads/Il2cpp/NoMoreTrash/Version.txt";
-        private const string githubBranchURL = "https://github.com/Voidane/NoMoreTrash";
-        private const string nexusURL = "https://www.nexusmods.com/schedule1/mods/221?tab=files";
+        private const string versionMostUpToDateURL = "https://raw.githubusercontent.com/dazuki/NoMoreTrash-Shroom/refs/heads/main/NoMoreTrash/Version.txt";
+        private const string gitURL = "https://github.com/dazuki/NoMoreTrash-Shroom/releases";
         
         private static readonly HttpClient client = new HttpClient();
 
         public override void OnInitializeMelon()
         {
             MelonLogger.Msg($"===========================================");
-            MelonLogger.Msg($"Initializing, Created by Voidane.");
+            MelonLogger.Msg($"Initializing, Original mod created by Voidane.");
+            MelonLogger.Msg($"This is a fixed version made by DazUki to work with Shroom update.");
+            MelonLogger.Msg($"NoMoreTrash Original: github.com/Voidane/NoMoreTrash");
             MelonLogger.Msg($"Discord: discord.gg/XB7ruKtJje");
 
             configData = new ConfigData();
@@ -52,7 +53,7 @@ namespace NoMoreTrash
 
                 if (versionCurrent != versionUpdate)
                 {
-                    MelonLogger.Msg($"New Update for no trash mod (IL2CPP)! {nexusURL}, Current: {versionCurrent}, Update: {versionUpdate}");
+                    MelonLogger.Msg($"New Update for NoMoreTrash-Shroom! {gitURL}, Current: {versionCurrent}, Update: {versionUpdate}");
                 }
             }
             catch (Exception e)
