@@ -75,7 +75,7 @@
       <HintPath>$(MonoGamePath)/Schedule I_Data/Managed/UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>libs/Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(MonoGamePath)/Schedule I_Data/Managed/Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -108,8 +108,8 @@
     <Reference Include="UnityEngine.InputLegacyModule">
       <HintPath>$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>libs/Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Il2CppNewtonsoft.Json">
+      <HintPath>$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/Il2CppNewtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
 
