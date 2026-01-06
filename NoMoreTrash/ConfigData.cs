@@ -50,7 +50,7 @@ namespace NoMoreTrash
         public ConfigData()
         {
             clearTrash = MelonPreferences.CreateCategory("ClearTrash");
-            
+
             // Initialize entries
             soilbag = clearTrash.CreateEntry<bool>("soilbag", true);
             soilbag2 = clearTrash.CreateEntry<bool>("soilbag2", true);
@@ -96,7 +96,7 @@ namespace NoMoreTrash
         private void InitializeTrashDictionary()
         {
             TrashItems = new Dictionary<string, bool>();
-            
+
             // Use reflection to get all static MelonPreferences_Entry<bool> fields
             var fields = typeof(ConfigData)
                 .GetFields(BindingFlags.Public | BindingFlags.Static)

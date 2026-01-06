@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  
+
   <Import Project="..\Local.props" Condition="Exists('..\Local.props')" />
-  
-  <PropertyGroup>
-    <!-- Fallback paths if Local.props is missing -->
-    <MonoGamePath Condition="'$(MonoGamePath)' == ''">/home/dazuki/Games/Schedule I Mono</MonoGamePath>
-    <IL2CPPGamePath Condition="'$(IL2CPPGamePath)' == ''">/home/dazuki/Games/Schedule I</IL2CPPGamePath>
-  </PropertyGroup>
+
+  <Target Name="ValidateGamePaths" BeforeTargets="BeforeBuild">
+    <Error Condition="!Exists('..\Local.props')"
+      Text="The 'Local.props' file is missing. Please copy 'Local.props.example' to 'Local.props' and configure your game paths." />
+    <Error Condition="'$(MonoGamePath)' == '' AND '$(IL2CPPGamePath)' == ''"
+      Text="Neither 'MonoGamePath' nor 'IL2CPPGamePath' is defined. Please define at least one in your 'Local.props' file." />
+    <Error Condition="'$(TargetFramework)' == 'netstandard2.1' AND '$(MonoGamePath)' == ''"
+      Text="The 'MonoGamePath' property is required for the Mono build but is not defined in 'Local.props'." />
+    <Error Condition="'$(TargetFramework)' == 'net6.0' AND '$(IL2CPPGamePath)' == ''"
+      Text="The 'IL2CPPGamePath' property is required for the IL2CPP build but is not defined in 'Local.props'." />
+  </Target>
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
@@ -117,11 +122,13 @@
   <ItemGroup>
     <PackageReference Include="LavaGang.MelonLoader" Version="0.7.0" />
   </ItemGroup>
-  
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Message Text="[PostBuild] Starting copy to mods directory..." Importance="high" />
-    <Exec Condition="'$(TargetFramework)' == 'netstandard2.1'" Command="cp &quot;$(TargetPath)&quot; &quot;$(MonoGamePath)/Mods&quot;" />
-    <Exec Condition="'$(TargetFramework)' == 'net6.0'" Command="cp &quot;$(TargetPath)&quot; &quot;$(IL2CPPGamePath)/Mods&quot;" />
+    <Exec Condition="'$(TargetFramework)' == 'netstandard2.1'"
+      Command="cp &quot;$(TargetPath)&quot; &quot;$(MonoGamePath)/Mods&quot;" />
+    <Exec Condition="'$(TargetFramework)' == 'net6.0'"
+      Command="cp &quot;$(TargetPath)&quot; &quot;$(IL2CPPGamePath)/Mods&quot;" />
     <Message Text="[PostBuild] Finished copying to mods directory." Importance="high" />
   </Target>
 </Project>

@@ -26,7 +26,7 @@ namespace NoMoreTrash
         private const string versionCurrent = "1.0.2a-Shroom";
         private const string versionMostUpToDateURL = "https://raw.githubusercontent.com/dazuki/NoMoreTrash-Shroom/refs/heads/main/NoMoreTrash/Version.txt";
         private const string gitURL = "https://github.com/dazuki/NoMoreTrash-Shroom/releases";
-        
+
         private static readonly HttpClient client = new HttpClient();
 
         public override void OnInitializeMelon()
