@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
+  
+  <Import Project="..\Local.props" Condition="Exists('..\Local.props')" />
+  
   <PropertyGroup>
-    <!-- Full path to Mono game installation -->
-    <MonoGamePath>/home/dazuki/Games/Schedule I Mono</MonoGamePath>
-    <IL2CPPGamePath>/home/dazuki/Games/Schedule I</IL2CPPGamePath>
+    <!-- Fallback paths if Local.props is missing -->
+    <MonoGamePath Condition="'$(MonoGamePath)' == ''">/home/dazuki/Games/Schedule I Mono</MonoGamePath>
+    <IL2CPPGamePath Condition="'$(IL2CPPGamePath)' == ''">/home/dazuki/Games/Schedule I</IL2CPPGamePath>
   </PropertyGroup>
 
   <PropertyGroup>
