@@ -15,7 +15,7 @@ using ScheduleOne.Trash;
 using Il2CppScheduleOne.Trash;
 #endif
 
-[assembly: MelonInfo(typeof(NoMoreTrashMod), "NoMoreTrash-Shroom", "1.0.2b-Shroom", "Voidane (Shroom Update by DazUki)")]
+[assembly: MelonInfo(typeof(NoMoreTrashMod), "NoMoreTrash-Shroom", "1.0.3", "Voidane (DazUki Fork)")]
 [assembly: MelonGame("TVGS", "Schedule I")]
 #if !Mono
 [assembly: MelonOptionalDependencies("ModManager&PhoneApp")]
@@ -27,7 +27,7 @@ namespace NoMoreTrash
     {
         public static ConfigData configData;
 
-        private const string versionCurrent = "1.0.2b-Shroom";
+        private const string versionCurrent = "1.0.3";
         private const string versionMostUpToDateURL = "https://raw.githubusercontent.com/dazuki/NoMoreTrash-Shroom/refs/heads/main/NoMoreTrash/Version.txt";
         private const string gitURL = "https://github.com/dazuki/NoMoreTrash-Shroom/releases";
 
