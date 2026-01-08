@@ -15,8 +15,9 @@ using ScheduleOne.Trash;
 using Il2CppScheduleOne.Trash;
 #endif
 
-[assembly: MelonInfo(typeof(NoMoreTrashMod), "NoMoreTrash-Shroom", "1.0.3", "Voidane (DazUki Fork)")]
+[assembly: MelonInfo(typeof(NoMoreTrashMod), "NoMoreTrash-Shroom", "1.0.4", "Voidane (Temporary Fix by DazUki)")]
 [assembly: MelonGame("TVGS", "Schedule I")]
+[assembly: AssemblyMetadata("NexusModID", "1444")]
 #if !Mono
 [assembly: MelonOptionalDependencies("ModManager&PhoneApp")]
 #endif
@@ -27,9 +28,9 @@ namespace NoMoreTrash
     {
         public static ConfigData configData;
 
-        private const string versionCurrent = "1.0.3";
+        private const string versionCurrent = "1.0.4";
         private const string versionMostUpToDateURL = "https://raw.githubusercontent.com/dazuki/NoMoreTrash-Shroom/refs/heads/main/NoMoreTrash/Version.txt";
-        private const string gitURL = "https://github.com/dazuki/NoMoreTrash-Shroom/releases";
+        private const string nexusURL = "https://www.nexusmods.com/schedule1/mods/1444";
 
         private static readonly HttpClient client = new HttpClient();
 
@@ -37,7 +38,7 @@ namespace NoMoreTrash
         {
             MelonLogger.Msg($"===========================================");
             MelonLogger.Msg($"Initializing, Original mod created by Voidane.");
-            MelonLogger.Msg($"This is a fixed version made by DazUki to work with Shroom update.");
+            MelonLogger.Msg($"This is a temporary fixed version made by DazUki to work with Shroom update.");
             MelonLogger.Msg($"NoMoreTrash Original: github.com/Voidane/NoMoreTrash");
             MelonLogger.Msg($"Discord: discord.gg/XB7ruKtJje");
 
@@ -63,7 +64,10 @@ namespace NoMoreTrash
 
                 if (versionCurrent != versionUpdate)
                 {
-                    MelonLogger.Msg($"New Update for NoMoreTrash-Shroom! {gitURL}, Current: {versionCurrent}, Update: {versionUpdate}");
+                    MelonLogger.Msg($"New Update for NoMoreTrash-Shroom!");
+                    MelonLogger.Msg($"{nexusURL}");
+                    MelonLogger.Msg($"Current: {versionCurrent}");
+                    MelonLogger.Msg($"Update: {versionUpdate}");
                 }
             }
             catch (Exception e)
