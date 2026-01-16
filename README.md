@@ -41,6 +41,41 @@
 - Works with Schedule 1 (current version)
 - Compatible with most other mods
 
+## 🛠️ Development Setup
+
+To build this mod from source, you'll need to configure your local game paths:
+
+1. **Copy the configuration template:**
+
+   ```bash
+   cp Local.props.example Local.props
+   ```
+
+2. **Edit `Local.props` and set your game installation paths:**
+   - `MonoGamePath`: Path to your Mono version of Schedule I (if you have it)
+   - `IL2CPPGamePath`: Path to your IL2CPP version of Schedule I
+
+   **Example paths:**
+   - Windows: `C:\Program Files (x86)\Steam\steamapps\common\Schedule I`
+   - Linux: `/home/username/.local/share/Steam/steamapps/common/Schedule I`
+
+3. **Build the project:**
+
+   ```bash
+   dotnet build NoMoreTrash.sln
+   ```
+
+   Or build for a specific runtime:
+
+   ```bash
+   dotnet build -c Mono      # For Mono runtime
+   dotnet build -c IL2CPP    # For IL2CPP runtime
+   ```
+
+4. **The built DLL will automatically copy to your game's Mods folder** (if paths are configured correctly)
+
+**Note:** If you don't have the game installed or haven't configured the paths, the build will fail with reference errors. This is expected - configure `Local.props` with valid game paths to build successfully.
+
 ## 🆘 Support
 
 Having issues? Join our Discord community for support:

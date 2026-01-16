@@ -2,9 +2,13 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <!-- Full path to Mono game installation -->
-    <MonoGamePath>/home/user/Games/Schedule I Mono</MonoGamePath>
+    <!-- Example: C:\Program Files (x86)\Steam\steamapps\common\Schedule I Mono -->
+    <!-- Example (Linux): /home/user/.local/share/Steam/steamapps/common/Schedule I Mono -->
+    <MonoGamePath></MonoGamePath>
 
     <!-- Full path to IL2CPP game installation -->
-    <IL2CPPGamePath>/home/user/Games/Schedule I</IL2CPPGamePath>
+    <!-- Example: C:\Program Files (x86)\Steam\steamapps\common\Schedule I -->
+    <!-- Example (Linux): /home/user/.local/share/Steam/steamapps/common/Schedule I -->
+    <IL2CPPGamePath></IL2CPPGamePath>
   </PropertyGroup>
 </Project>

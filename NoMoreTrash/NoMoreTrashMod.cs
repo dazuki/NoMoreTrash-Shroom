@@ -141,9 +141,40 @@ namespace NoMoreTrash
         {
             try
             {
-                ModManagerPhoneApp.ModSettingsEvents.OnPhonePreferencesSaved += HandleSettingsUpdate;
-                ModManagerPhoneApp.ModSettingsEvents.OnMenuPreferencesSaved += HandleSettingsUpdate;
-                MelonLogger.Msg("Successfully subscribed to Mod Manager events.");
+                // Use reflection to access ModManager APIs since it's an optional dependency
+                var modManagerAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                    .FirstOrDefault(a => a.GetName().Name == "ModManager&PhoneApp");
+
+                if (modManagerAssembly == null)
+                {
+                    MelonLogger.Warning("ModManager assembly not found.");
+                    _modManagerFound = false;
+                    return;
+                }
+
+                var eventsType = modManagerAssembly.GetType("ModManagerPhoneApp.ModSettingsEvents");
+                if (eventsType == null)
+                {
+                    MelonLogger.Warning("ModSettingsEvents type not found in ModManager.");
+                    _modManagerFound = false;
+                    return;
+                }
+
+                var onPhoneSavedEvent = eventsType.GetEvent("OnPhonePreferencesSaved");
+                var onMenuSavedEvent = eventsType.GetEvent("OnMenuPreferencesSaved");
+
+                if (onPhoneSavedEvent != null && onMenuSavedEvent != null)
+                {
+                    var handlerDelegate = new Action(HandleSettingsUpdate);
+                    onPhoneSavedEvent.AddEventHandler(null, handlerDelegate);
+                    onMenuSavedEvent.AddEventHandler(null, handlerDelegate);
+                    MelonLogger.Msg("Successfully subscribed to Mod Manager events.");
+                }
+                else
+                {
+                    MelonLogger.Warning("Could not find ModManager events.");
+                    _modManagerFound = false;
+                }
             }
             catch (Exception ex)
             {
@@ -164,8 +195,26 @@ namespace NoMoreTrash
 
             try
             {
-                ModManagerPhoneApp.ModSettingsEvents.OnPhonePreferencesSaved -= HandleSettingsUpdate;
-                ModManagerPhoneApp.ModSettingsEvents.OnMenuPreferencesSaved -= HandleSettingsUpdate;
+                // Use reflection to unsubscribe from ModManager events
+                var modManagerAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                    .FirstOrDefault(a => a.GetName().Name == "ModManager&PhoneApp");
+
+                if (modManagerAssembly != null)
+                {
+                    var eventsType = modManagerAssembly.GetType("ModManagerPhoneApp.ModSettingsEvents");
+                    if (eventsType != null)
+                    {
+                        var onPhoneSavedEvent = eventsType.GetEvent("OnPhonePreferencesSaved");
+                        var onMenuSavedEvent = eventsType.GetEvent("OnMenuPreferencesSaved");
+
+                        if (onPhoneSavedEvent != null && onMenuSavedEvent != null)
+                        {
+                            var handlerDelegate = new Action(HandleSettingsUpdate);
+                            onPhoneSavedEvent.RemoveEventHandler(null, handlerDelegate);
+                            onMenuSavedEvent.RemoveEventHandler(null, handlerDelegate);
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {

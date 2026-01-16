@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\Local.props" Condition="Exists('..\Local.props')" />
@@ -6,12 +5,12 @@
   <Target Name="ValidateGamePaths" BeforeTargets="BeforeBuild">
     <Error Condition="!Exists('..\Local.props')"
       Text="The 'Local.props' file is missing. Please copy 'Local.props.example' to 'Local.props' and configure your game paths." />
-    <Error Condition="'$(MonoGamePath)' == '' AND '$(IL2CPPGamePath)' == ''"
-      Text="Neither 'MonoGamePath' nor 'IL2CPPGamePath' is defined. Please define at least one in your 'Local.props' file." />
-    <Error Condition="'$(TargetFramework)' == 'netstandard2.1' AND '$(MonoGamePath)' == ''"
-      Text="The 'MonoGamePath' property is required for the Mono build but is not defined in 'Local.props'." />
-    <Error Condition="'$(TargetFramework)' == 'net6.0' AND '$(IL2CPPGamePath)' == ''"
-      Text="The 'IL2CPPGamePath' property is required for the IL2CPP build but is not defined in 'Local.props'." />
+    <Warning Condition="'$(MonoGamePath)' == '' AND '$(IL2CPPGamePath)' == ''"
+      Text="Neither 'MonoGamePath' nor 'IL2CPPGamePath' is defined in 'Local.props'. The project will build but references will not be resolved. Please configure at least one game path." />
+    <Warning Condition="'$(TargetFramework)' == 'netstandard2.1' AND ('$(MonoGamePath)' == '' OR !Exists('$(MonoGamePath)'))"
+      Text="The 'MonoGamePath' is not configured or does not exist. The Mono build will not have proper references." />
+    <Warning Condition="'$(TargetFramework)' == 'net6.0' AND ('$(IL2CPPGamePath)' == '' OR !Exists('$(IL2CPPGamePath)'))"
+      Text="The 'IL2CPPGamePath' is not configured or does not exist. The IL2CPP build will not have proper references." />
   </Target>
 
   <PropertyGroup>
@@ -21,10 +20,8 @@
     <RootNamespace>NoMoreTrash</RootNamespace>
     <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
-    <!-- Syncing AssemblyVersion/FileVersion with Constants.ModVersion (2.1.0) -->
     <AssemblyVersion>4.0.1.0</AssemblyVersion>
     <FileVersion>4.0.1.0</FileVersion>
-    <!-- <NeutralLanguage>en-US</NeutralLanguage> -->
     <AssemblyName>NoMoreTrash</AssemblyName>
     <Platforms>AnyCPU;x64</Platforms>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
@@ -46,74 +43,95 @@
     <TargetName>NoMoreTrash.Il2cpp</TargetName>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-    <Reference Include="0Harmony">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1' AND '$(MonoGamePath)' != '' AND Exists('$(MonoGamePath)')">
+    <Reference Include="0Harmony" Condition="Exists('$(MonoGamePath)/MelonLoader/net6/0Harmony.dll')">
       <HintPath>$(MonoGamePath)/MelonLoader/net6/0Harmony.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp">
+    <Reference Include="Assembly-CSharp" Condition="Exists('$(MonoGamePath)/Schedule I_Data/Managed/Assembly-CSharp.dll')">
       <HintPath>$(MonoGamePath)/Schedule I_Data/Managed/Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="FishNet.Runtime">
+    <Reference Include="FishNet.Runtime" Condition="Exists('$(MonoGamePath)/Schedule I_Data/Managed/FishNet.Runtime.dll')">
       <HintPath>$(MonoGamePath)/Schedule I_Data/Managed/FishNet.Runtime.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Il2CppInterop.Common">
+    <Reference Include="Il2CppInterop.Common" Condition="Exists('$(MonoGamePath)/MelonLoader/net6/Il2CppInterop.Common.dll')">
       <HintPath>$(MonoGamePath)/MelonLoader/net6/Il2CppInterop.Common.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Il2CppInterop.Runtime">
+    <Reference Include="Il2CppInterop.Runtime" Condition="Exists('$(MonoGamePath)/MelonLoader/net6/Il2CppInterop.Runtime.dll')">
       <HintPath>$(MonoGamePath)/MelonLoader/net6/Il2CppInterop.Runtime.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="mscorlib">
+    <Reference Include="mscorlib" Condition="Exists('$(MonoGamePath)/Schedule I_Data/Managed/mscorlib.dll')">
       <HintPath>$(MonoGamePath)/Schedule I_Data/Managed/mscorlib.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="UnityEngine">
+    <Reference Include="UnityEngine" Condition="Exists('$(MonoGamePath)/Schedule I_Data/Managed/UnityEngine.dll')">
       <HintPath>$(MonoGamePath)/Schedule I_Data/Managed/UnityEngine.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
+    <Reference Include="UnityEngine.CoreModule" Condition="Exists('$(MonoGamePath)/Schedule I_Data/Managed/UnityEngine.CoreModule.dll')">
       <HintPath>$(MonoGamePath)/Schedule I_Data/Managed/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule">
+    <Reference Include="UnityEngine.InputLegacyModule" Condition="Exists('$(MonoGamePath)/Schedule I_Data/Managed/UnityEngine.InputLegacyModule.dll')">
       <HintPath>$(MonoGamePath)/Schedule I_Data/Managed/UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
+    <Reference Include="Newtonsoft.Json" Condition="Exists('$(MonoGamePath)/Schedule I_Data/Managed/Newtonsoft.Json.dll')">
       <HintPath>$(MonoGamePath)/Schedule I_Data/Managed/Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <Reference Include="0Harmony">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' AND '$(IL2CPPGamePath)' != '' AND Exists('$(IL2CPPGamePath)')">
+    <Reference Include="0Harmony" Condition="Exists('$(IL2CPPGamePath)/MelonLoader/net6/0Harmony.dll')">
       <HintPath>$(IL2CPPGamePath)/MelonLoader/net6/0Harmony.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp">
+    <Reference Include="Assembly-CSharp" Condition="Exists('$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/Assembly-CSharp.dll')">
       <HintPath>$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Il2CppFishNet.Runtime">
+    <Reference Include="Il2CppFishNet.Runtime" Condition="Exists('$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/Il2CppFishNet.Runtime.dll')">
       <HintPath>$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/Il2CppFishNet.Runtime.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Il2CppInterop.Common">
+    <Reference Include="Il2CppInterop.Common" Condition="Exists('$(IL2CPPGamePath)/MelonLoader/net6/Il2CppInterop.Common.dll')">
       <HintPath>$(IL2CPPGamePath)/MelonLoader/net6/Il2CppInterop.Common.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Il2CppInterop.Runtime">
+    <Reference Include="Il2CppInterop.Runtime" Condition="Exists('$(IL2CPPGamePath)/MelonLoader/net6/Il2CppInterop.Runtime.dll')">
       <HintPath>$(IL2CPPGamePath)/MelonLoader/net6/Il2CppInterop.Runtime.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Il2Cppmscorlib">
+    <Reference Include="Il2Cppmscorlib" Condition="Exists('$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/Il2Cppmscorlib.dll')">
       <HintPath>$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/Il2Cppmscorlib.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="UnityEngine">
+    <Reference Include="UnityEngine" Condition="Exists('$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/UnityEngine.dll')">
       <HintPath>$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/UnityEngine.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
+    <Reference Include="UnityEngine.CoreModule" Condition="Exists('$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/UnityEngine.CoreModule.dll')">
       <HintPath>$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule">
+    <Reference Include="UnityEngine.InputLegacyModule" Condition="Exists('$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/UnityEngine.InputLegacyModule.dll')">
       <HintPath>$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="Il2CppNewtonsoft.Json">
+    <Reference Include="Il2CppNewtonsoft.Json" Condition="Exists('$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/Il2CppNewtonsoft.Json.dll')">
       <HintPath>$(IL2CPPGamePath)/MelonLoader/Il2CppAssemblies/Il2CppNewtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <!-- Optional Mod Manager Reference -->
-    <Reference Include="ModManager&amp;PhoneApp">
+    <Reference Include="ModManager&amp;PhoneApp" Condition="Exists('$(IL2CPPGamePath)/Mods/ModManager&amp;PhoneApp.dll')">
       <HintPath>$(IL2CPPGamePath)/Mods/ModManager&amp;PhoneApp.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 
@@ -129,10 +147,14 @@
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Message Text="[PostBuild] Starting copy to mods directory..." Importance="high" />
-    <Exec Condition="'$(TargetFramework)' == 'netstandard2.1'"
+    <Exec Condition="'$(TargetFramework)' == 'netstandard2.1' AND '$(MonoGamePath)' != '' AND Exists('$(MonoGamePath)')"
       Command="cp &quot;$(TargetPath)&quot; &quot;$(MonoGamePath)/Mods&quot;" />
-    <Exec Condition="'$(TargetFramework)' == 'net6.0'"
+    <Exec Condition="'$(TargetFramework)' == 'net6.0' AND '$(IL2CPPGamePath)' != '' AND Exists('$(IL2CPPGamePath)')"
       Command="cp &quot;$(TargetPath)&quot; &quot;$(IL2CPPGamePath)/Mods&quot;" />
-    <Message Text="[PostBuild] Finished copying to mods directory." Importance="high" />
+    <Message Condition="'$(TargetFramework)' == 'netstandard2.1' AND ('$(MonoGamePath)' == '' OR !Exists('$(MonoGamePath)'))"
+      Text="[PostBuild] Skipping copy - MonoGamePath not configured or does not exist." Importance="high" />
+    <Message Condition="'$(TargetFramework)' == 'net6.0' AND ('$(IL2CPPGamePath)' == '' OR !Exists('$(IL2CPPGamePath)'))"
+      Text="[PostBuild] Skipping copy - IL2CPPGamePath not configured or does not exist." Importance="high" />
+    <Message Text="[PostBuild] Finished." Importance="high" />
   </Target>
 </Project>
