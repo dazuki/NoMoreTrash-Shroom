@@ -16,7 +16,7 @@ using ScheduleOne.Trash;
 using Il2CppScheduleOne.Trash;
 #endif
 
-[assembly: MelonInfo(typeof(NoMoreTrashMod), "NoMoreTrash-Shroom", "1.0.4", "Voidane (Temporary Fix by DazUki)")]
+[assembly: MelonInfo(typeof(NoMoreTrashMod), "NoMoreTrash-Shroom", "1.0.5", "Voidane (Temporary Fix by DazUki)")]
 [assembly: MelonGame("TVGS", "Schedule I")]
 [assembly: AssemblyMetadata("NexusModID", "1444")]
 #if !Mono
@@ -41,7 +41,7 @@ namespace NoMoreTrash
             InitializeModManager();
             HarmonyPatches();
 
-            MelonLogger.Msg($"Has been initialized...");
+            MelonLogger.Msg($"NoMoreTrash has been initialized...");
             MelonLogger.Msg($"===========================================");
         }
 
@@ -52,7 +52,7 @@ namespace NoMoreTrash
 
         private void HarmonyPatches()
         {
-            HarmonyLib.Harmony patcher = new HarmonyLib.Harmony("com.voidane.nomoretrash");
+            HarmonyLib.Harmony patcher = new("com.voidane.nomoretrash");
 
             MethodInfo original = AccessTools.Method(typeof(TrashItem), "Start");
             if (original == null)
