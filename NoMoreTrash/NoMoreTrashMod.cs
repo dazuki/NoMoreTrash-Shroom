@@ -1,12 +1,13 @@
 using UnityEngine;
+
 using HarmonyLib;
+
 using MelonLoader;
+
 using NoMoreTrash;
 
 using System;
 using System.Reflection;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Linq;
 
 #if Mono
@@ -26,13 +27,7 @@ namespace NoMoreTrash
 {
     public class NoMoreTrashMod : MelonMod
     {
-        public static ConfigData configData;
-
-        private const string versionCurrent = "1.0.4";
-        private const string versionMostUpToDateURL = "https://raw.githubusercontent.com/dazuki/NoMoreTrash-Shroom/refs/heads/main/NoMoreTrash/Version.txt";
-        private const string nexusURL = "https://www.nexusmods.com/schedule1/mods/1444";
-
-        private static readonly HttpClient client = new HttpClient();
+        public static ConfigData ConfigData;
 
         public override void OnInitializeMelon()
         {
@@ -42,41 +37,17 @@ namespace NoMoreTrash
             MelonLogger.Msg($"NoMoreTrash Original: github.com/Voidane/NoMoreTrash");
             MelonLogger.Msg($"Discord: discord.gg/XB7ruKtJje");
 
-            configData = new ConfigData();
+            ConfigData = new ConfigData();
             InitializeModManager();
             HarmonyPatches();
-            _ = CheckForUpdates(); // Fire and forget safely
+
+            MelonLogger.Msg($"Has been initialized...");
+            MelonLogger.Msg($"===========================================");
         }
 
         public override void OnDeinitializeMelon()
         {
             DeinitializeModManager();
-        }
-
-        private async Task CheckForUpdates()
-        {
-            try
-            {
-                // Set a timeout to avoid hanging indefinitely
-                client.Timeout = TimeSpan.FromSeconds(10);
-                string content = await client.GetStringAsync(versionMostUpToDateURL);
-                string versionUpdate = content.Trim();
-
-                if (versionCurrent != versionUpdate)
-                {
-                    MelonLogger.Msg($"New Update for NoMoreTrash-Shroom!");
-                    MelonLogger.Msg($"{nexusURL}");
-                    MelonLogger.Msg($"Current: {versionCurrent}");
-                    MelonLogger.Msg($"Update: {versionUpdate}");
-                }
-            }
-            catch (Exception e)
-            {
-                MelonLogger.Msg($"Could not fetch most up to date version: {e.Message}");
-            }
-
-            MelonLogger.Msg($"Has been initialized...");
-            MelonLogger.Msg($"===========================================");
         }
 
         private void HarmonyPatches()
@@ -96,11 +67,14 @@ namespace NoMoreTrash
 
         private static void Patch_TrashItem_Start(TrashItem __instance)
         {
-            if (__instance == null || __instance.transform.parent == null) return;
+            if (__instance == null || __instance.transform.parent == null)
+            {
+                return;
+            }
 
             if (__instance.transform.parent.gameObject.name.Contains("_Temp"))
             {
-                if (!configData.TrashItems.TryGetValue(__instance.ID, out bool value))
+                if (!ConfigData.TrashItems.TryGetValue(__instance.ID, out bool value))
                 {
                     MelonLogger.Error($"could not find: {__instance.ID} in config");
                     MelonLogger.Error($"This might be a new or custom item that needs to added to the config!");
@@ -186,12 +160,15 @@ namespace NoMoreTrash
         private void HandleSettingsUpdate()
         {
             MelonLogger.Msg("Dynamic settings update triggered.");
-            configData.Reload();
+            ConfigData.Reload();
         }
 
         private void DeinitializeModManager()
         {
-            if (!_modManagerFound) return;
+            if (!_modManagerFound)
+            {
+                return;
+            }
 
             try
             {

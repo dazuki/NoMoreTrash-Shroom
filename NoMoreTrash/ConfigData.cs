@@ -1,47 +1,48 @@
-using MelonLoader;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
+
+using MelonLoader;
 
 namespace NoMoreTrash
 {
     public class ConfigData
     {
-        public static MelonPreferences_Category clearTrash;
-        public static MelonPreferences_Entry<bool> soilbag;
-        public static MelonPreferences_Entry<bool> soilbag2;
-        public static MelonPreferences_Entry<bool> seedvial;
-        public static MelonPreferences_Entry<bool> cuke;
-        public static MelonPreferences_Entry<bool> pgr;
-        public static MelonPreferences_Entry<bool> speedgrow;
-        public static MelonPreferences_Entry<bool> fertilizer;
-        public static MelonPreferences_Entry<bool> plantscrap;
-        public static MelonPreferences_Entry<bool> trashbag;
-        public static MelonPreferences_Entry<bool> soilbag3;
-        public static MelonPreferences_Entry<bool> cigarette;
-        public static MelonPreferences_Entry<bool> usedcigarette;
-        public static MelonPreferences_Entry<bool> cigarettebox;
-        public static MelonPreferences_Entry<bool> coffeecup;
-        public static MelonPreferences_Entry<bool> crushedcuke;
-        public static MelonPreferences_Entry<bool> glassbottle;
-        public static MelonPreferences_Entry<bool> litter1;
-        public static MelonPreferences_Entry<bool> waterbottle;
-        public static MelonPreferences_Entry<bool> energydrink;
-        public static MelonPreferences_Entry<bool> flumedicine;
-        public static MelonPreferences_Entry<bool> gasoline;
-        public static MelonPreferences_Entry<bool> mouthwash;
-        public static MelonPreferences_Entry<bool> motoroil;
-        public static MelonPreferences_Entry<bool> iodine;
-        public static MelonPreferences_Entry<bool> bong;
-        public static MelonPreferences_Entry<bool> syringe;
-        public static MelonPreferences_Entry<bool> pipe;
-        public static MelonPreferences_Entry<bool> chemicaljug;
-        public static MelonPreferences_Entry<bool> m1911mag;
-        public static MelonPreferences_Entry<bool> revolvercylinder;
-        public static MelonPreferences_Entry<bool> acid;
-        public static MelonPreferences_Entry<bool> addy;
-        public static MelonPreferences_Entry<bool> phosphorus;
-        public static MelonPreferences_Entry<bool> substratebag;
+        public static MelonPreferences_Category ClearTrash;
+        public static MelonPreferences_Entry<bool> Soilbag;
+        public static MelonPreferences_Entry<bool> Soilbag2;
+        public static MelonPreferences_Entry<bool> Seedvial;
+        public static MelonPreferences_Entry<bool> Cuke;
+        public static MelonPreferences_Entry<bool> Pgr;
+        public static MelonPreferences_Entry<bool> Speedgrow;
+        public static MelonPreferences_Entry<bool> Fertilizer;
+        public static MelonPreferences_Entry<bool> Plantscrap;
+        public static MelonPreferences_Entry<bool> Trashbag;
+        public static MelonPreferences_Entry<bool> Soilbag3;
+        public static MelonPreferences_Entry<bool> Cigarette;
+        public static MelonPreferences_Entry<bool> Usedcigarette;
+        public static MelonPreferences_Entry<bool> Cigarettebox;
+        public static MelonPreferences_Entry<bool> Coffeecup;
+        public static MelonPreferences_Entry<bool> Crushedcuke;
+        public static MelonPreferences_Entry<bool> Glassbottle;
+        public static MelonPreferences_Entry<bool> Litter1;
+        public static MelonPreferences_Entry<bool> Waterbottle;
+        public static MelonPreferences_Entry<bool> Energydrink;
+        public static MelonPreferences_Entry<bool> Flumedicine;
+        public static MelonPreferences_Entry<bool> Gasoline;
+        public static MelonPreferences_Entry<bool> Mouthwash;
+        public static MelonPreferences_Entry<bool> Motoroil;
+        public static MelonPreferences_Entry<bool> Iodine;
+        public static MelonPreferences_Entry<bool> Bong;
+        public static MelonPreferences_Entry<bool> Syringe;
+        public static MelonPreferences_Entry<bool> Pipe;
+        public static MelonPreferences_Entry<bool> Chemicaljug;
+        public static MelonPreferences_Entry<bool> M1911mag;
+        public static MelonPreferences_Entry<bool> Revolvercylinder;
+        public static MelonPreferences_Entry<bool> Acid;
+        public static MelonPreferences_Entry<bool> Addy;
+        public static MelonPreferences_Entry<bool> Phosphorus;
+        public static MelonPreferences_Entry<bool> Substratebag;
 
         // Trash Limit changer
 
@@ -49,46 +50,46 @@ namespace NoMoreTrash
 
         public ConfigData()
         {
-            clearTrash = MelonPreferences.CreateCategory("NoMoreTrash-Shroom", "Clear Trash");
+            ClearTrash = MelonPreferences.CreateCategory("NoMoreTrash-Shroom", "Clear Trash");
 
             // Initialize entries
-            trashbag = clearTrash.CreateEntry<bool>("trashbag", true, "Trash Bag");
-            soilbag = clearTrash.CreateEntry<bool>("soilbag", true, "Soil");
-            soilbag2 = clearTrash.CreateEntry<bool>("soilbag2", true, "Long-Life Soil");
-            soilbag3 = clearTrash.CreateEntry<bool>("soilbag3", true, "Extra Long-Life Soil");
-            seedvial = clearTrash.CreateEntry<bool>("seedvial", true, "Seed Vials");
-            speedgrow = clearTrash.CreateEntry<bool>("speedgrow", true, "Speed Grow");
-            fertilizer = clearTrash.CreateEntry<bool>("fertilizer", true, "Fertilizer");
-            pgr = clearTrash.CreateEntry<bool>("pgr", true, "PGR");
-            cuke = clearTrash.CreateEntry<bool>("cuke", true, "Cuke");
-            gasoline = clearTrash.CreateEntry<bool>("gasoline", true, "Gasoline");
-            mouthwash = clearTrash.CreateEntry<bool>("mouthwash", true, "Mouth Wash");
-            motoroil = clearTrash.CreateEntry<bool>("motoroil", true, "Motor Oil");
-            iodine = clearTrash.CreateEntry<bool>("iodine", true, "Iodine");
-            energydrink = clearTrash.CreateEntry<bool>("energydrink", true, "Energy Drink");
-            flumedicine = clearTrash.CreateEntry<bool>("flumedicine", true, "Flu Medicine");
-            plantscrap = clearTrash.CreateEntry<bool>("plantscrap", true, "Plant Scrap");
-            cigarette = clearTrash.CreateEntry<bool>("cigarette", true, "Cigarette");
-            usedcigarette = clearTrash.CreateEntry<bool>("usedcigarette", true, "Used Cigarette");
-            cigarettebox = clearTrash.CreateEntry<bool>("cigarettebox", true, "Cigarette Pack");
-            coffeecup = clearTrash.CreateEntry<bool>("coffeecup", true, "Coffe Cup");
-            crushedcuke = clearTrash.CreateEntry<bool>("crushedcuke", true, "Crushed Cuke");
-            glassbottle = clearTrash.CreateEntry<bool>("glassbottle", true, "Glass Bottle");
-            litter1 = clearTrash.CreateEntry<bool>("litter1", true, "Litter");
-            waterbottle = clearTrash.CreateEntry<bool>("waterbottle", true, "Water Bottle");
-            bong = clearTrash.CreateEntry<bool>("bong", true, "Bong");
-            syringe = clearTrash.CreateEntry<bool>("syringe", true, "Syringe");
-            pipe = clearTrash.CreateEntry<bool>("pipe", true, "Pipe");
-            chemicaljug = clearTrash.CreateEntry<bool>("chemicaljug", true, "Chemical Jug");
-            m1911mag = clearTrash.CreateEntry<bool>("m1911mag", true, "M1911 Magazine");
-            revolvercylinder = clearTrash.CreateEntry<bool>("revolvercylinder", true, "Revolver Cylinder");
-            acid = clearTrash.CreateEntry<bool>("acid", true, "Acid");
-            addy = clearTrash.CreateEntry<bool>("addy", true, "Addy");
-            phosphorus = clearTrash.CreateEntry<bool>("phosphorus", true, "Phosphorus");
-            substratebag = clearTrash.CreateEntry<bool>("substratebag", true, "Mushroom Substrate");
+            Trashbag = ClearTrash.CreateEntry<bool>("trashbag", true, "Trash Bag");
+            Soilbag = ClearTrash.CreateEntry<bool>("soilbag", true, "Soil");
+            Soilbag2 = ClearTrash.CreateEntry<bool>("soilbag2", true, "Long-Life Soil");
+            Soilbag3 = ClearTrash.CreateEntry<bool>("soilbag3", true, "Extra Long-Life Soil");
+            Seedvial = ClearTrash.CreateEntry<bool>("seedvial", true, "Seed Vials");
+            Speedgrow = ClearTrash.CreateEntry<bool>("speedgrow", true, "Speed Grow");
+            Fertilizer = ClearTrash.CreateEntry<bool>("fertilizer", true, "Fertilizer");
+            Pgr = ClearTrash.CreateEntry<bool>("pgr", true, "PGR");
+            Cuke = ClearTrash.CreateEntry<bool>("cuke", true, "Cuke");
+            Gasoline = ClearTrash.CreateEntry<bool>("gasoline", true, "Gasoline");
+            Mouthwash = ClearTrash.CreateEntry<bool>("mouthwash", true, "Mouth Wash");
+            Motoroil = ClearTrash.CreateEntry<bool>("motoroil", true, "Motor Oil");
+            Iodine = ClearTrash.CreateEntry<bool>("iodine", true, "Iodine");
+            Energydrink = ClearTrash.CreateEntry<bool>("energydrink", true, "Energy Drink");
+            Flumedicine = ClearTrash.CreateEntry<bool>("flumedicine", true, "Flu Medicine");
+            Plantscrap = ClearTrash.CreateEntry<bool>("plantscrap", true, "Plant Scrap");
+            Cigarette = ClearTrash.CreateEntry<bool>("cigarette", true, "Cigarette");
+            Usedcigarette = ClearTrash.CreateEntry<bool>("usedcigarette", true, "Used Cigarette");
+            Cigarettebox = ClearTrash.CreateEntry<bool>("cigarettebox", true, "Cigarette Pack");
+            Coffeecup = ClearTrash.CreateEntry<bool>("coffeecup", true, "Coffe Cup");
+            Crushedcuke = ClearTrash.CreateEntry<bool>("crushedcuke", true, "Crushed Cuke");
+            Glassbottle = ClearTrash.CreateEntry<bool>("glassbottle", true, "Glass Bottle");
+            Litter1 = ClearTrash.CreateEntry<bool>("litter1", true, "Litter");
+            Waterbottle = ClearTrash.CreateEntry<bool>("waterbottle", true, "Water Bottle");
+            Bong = ClearTrash.CreateEntry<bool>("bong", true, "Bong");
+            Syringe = ClearTrash.CreateEntry<bool>("syringe", true, "Syringe");
+            Pipe = ClearTrash.CreateEntry<bool>("pipe", true, "Pipe");
+            Chemicaljug = ClearTrash.CreateEntry<bool>("chemicaljug", true, "Chemical Jug");
+            M1911mag = ClearTrash.CreateEntry<bool>("m1911mag", true, "M1911 Magazine");
+            Revolvercylinder = ClearTrash.CreateEntry<bool>("revolvercylinder", true, "Revolver Cylinder");
+            Acid = ClearTrash.CreateEntry<bool>("acid", true, "Acid");
+            Addy = ClearTrash.CreateEntry<bool>("addy", true, "Addy");
+            Phosphorus = ClearTrash.CreateEntry<bool>("phosphorus", true, "Phosphorus");
+            Substratebag = ClearTrash.CreateEntry<bool>("substratebag", true, "Mushroom Substrate");
 
-            clearTrash.SetFilePath("UserData/NoTrashMod.cfg");
-            clearTrash.SaveToFile();
+            ClearTrash.SetFilePath("UserData/NoTrashMod.cfg");
+            ClearTrash.SaveToFile();
 
             Reload();
         }
