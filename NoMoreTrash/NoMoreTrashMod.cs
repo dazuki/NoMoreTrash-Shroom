@@ -37,7 +37,7 @@ namespace NoMoreTrash
             MelonLogger.Msg($"NoMoreTrash Original: github.com/Voidane/NoMoreTrash");
             MelonLogger.Msg($"Discord: discord.gg/XB7ruKtJje");
 
-            ConfigData = new ConfigData();
+            ConfigData = new ConfigData(LoggerInstance);
             InitializeModManager();
             HarmonyPatches();
 
@@ -48,6 +48,11 @@ namespace NoMoreTrash
         public override void OnDeinitializeMelon()
         {
             DeinitializeModManager();
+        }
+
+        public override void OnPreferencesSaved()
+        {
+            ConfigData?.Reload();
         }
 
         private void HarmonyPatches()

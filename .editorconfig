@@ -24,6 +24,9 @@ insert_final_newline = false
 #### .NET Coding Conventions ####
 [*.{cs,vb}]
 
+# IDE0040: Accessibility modifiers required (escalated to a build warning)
+dotnet_diagnostic.IDE0040.severity = warning
+
 # Organize usings
 dotnet_separate_import_directive_groups = true
 dotnet_sort_system_directives_first = true
@@ -73,6 +76,9 @@ dotnet_code_quality_unused_parameters = all:suggestion
 
 # Suppression preferences
 dotnet_remove_unnecessary_suppression_exclusions = none
+
+# CA2211: Non-constant fields should not be visible — static fields used by reflection in ConfigData
+dotnet_diagnostic.CA2211.severity = none
 
 #### C# Coding Conventions ####
 [*.cs]

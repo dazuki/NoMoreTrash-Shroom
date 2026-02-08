@@ -44,12 +44,13 @@ namespace NoMoreTrash
         public static MelonPreferences_Entry<bool> Phosphorus;
         public static MelonPreferences_Entry<bool> Substratebag;
 
-        // Trash Limit changer
-
         public Dictionary<string, bool> TrashItems;
 
-        public ConfigData()
+        private readonly MelonLogger.Instance _logger;
+
+        public ConfigData(MelonLogger.Instance logger)
         {
+            _logger = logger;
             ClearTrash = MelonPreferences.CreateCategory("NoMoreTrash-Shroom", "Clear Trash");
 
             // Initialize entries
@@ -88,10 +89,10 @@ namespace NoMoreTrash
             Phosphorus = ClearTrash.CreateEntry("phosphorus", true, "Phosphorus");
             Substratebag = ClearTrash.CreateEntry("substratebag", true, "Mushroom Substrate");
 
-            ClearTrash.SetFilePath("UserData/NoTrashMod.cfg");
-            ClearTrash.SaveToFile();
+            MelonPreferences.Save();
 
             Reload();
+            SubscribeToChanges();
         }
 
         public void Reload()
@@ -108,8 +109,27 @@ namespace NoMoreTrash
                 var entry = (MelonPreferences_Entry<bool>)field.GetValue(null);
                 if (entry != null)
                 {
-                    // Use the entry's Identifier (key) as the dictionary key
                     TrashItems[entry.Identifier] = entry.Value;
+                }
+            }
+        }
+
+        private void SubscribeToChanges()
+        {
+            var fields = typeof(ConfigData)
+                .GetFields(BindingFlags.Public | BindingFlags.Static)
+                .Where(f => f.FieldType == typeof(MelonPreferences_Entry<bool>));
+
+            foreach (var field in fields)
+            {
+                var entry = (MelonPreferences_Entry<bool>)field.GetValue(null);
+                if (entry != null)
+                {
+                    entry.OnEntryValueChanged.Subscribe((oldValue, newValue) =>
+                    {
+                        TrashItems[entry.Identifier] = newValue;
+                        _logger.Msg($"{entry.DisplayName} changed: {oldValue} -> {newValue}");
+                    });
                 }
             }
         }

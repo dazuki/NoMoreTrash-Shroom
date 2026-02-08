@@ -20,6 +20,7 @@
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
         <NoWarn>$(NoWarn);NU1701</NoWarn>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     </PropertyGroup>
     <!-- Mono Configuration (netstandard2.1) -->
     <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
@@ -129,12 +130,26 @@
     <ItemGroup>
         <PackageReference Include="LavaGang.MelonLoader" Version="0.7.0" />
     </ItemGroup>
+    <PropertyGroup>
+        <ReleaseDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\Releases'))</ReleaseDir>
+        <StagingDir>$(ReleaseDir)\_staging</StagingDir>
+        <ZipName Condition="'$(TargetFramework)' == 'netstandard2.1'">NoMoreTrash-Shroom_Mono.zip</ZipName>
+        <ZipName Condition="'$(TargetFramework)' == 'net6.0'">NoMoreTrash-Shroom_IL2CPP.zip</ZipName>
+    </PropertyGroup>
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
         <Message Text="[PostBuild] Starting copy to mods directory..." Importance="high" />
         <Exec Condition="'$(TargetFramework)' == 'netstandard2.1' AND '$(MonoGamePath)' != '' AND Exists('$(MonoGamePath)')" Command="cp &quot;$(TargetPath)&quot; &quot;$(MonoGamePath)/Mods&quot;" />
         <Exec Condition="'$(TargetFramework)' == 'net6.0' AND '$(IL2CPPGamePath)' != '' AND Exists('$(IL2CPPGamePath)')" Command="cp &quot;$(TargetPath)&quot; &quot;$(IL2CPPGamePath)/Mods&quot;" />
         <Message Condition="'$(TargetFramework)' == 'netstandard2.1' AND ('$(MonoGamePath)' == '' OR !Exists('$(MonoGamePath)'))" Text="[PostBuild] Skipping copy - MonoGamePath not configured or does not exist." Importance="high" />
         <Message Condition="'$(TargetFramework)' == 'net6.0' AND ('$(IL2CPPGamePath)' == '' OR !Exists('$(IL2CPPGamePath)'))" Text="[PostBuild] Skipping copy - IL2CPPGamePath not configured or does not exist." Importance="high" />
+        <!-- Package release zip -->
+        <RemoveDir Directories="$(StagingDir)" />
+        <MakeDir Directories="$(StagingDir)/Mods" />
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(StagingDir)/Mods" />
+        <Delete Files="$(ReleaseDir)/$(ZipName)" Condition="Exists('$(ReleaseDir)/$(ZipName)')" />
+        <ZipDirectory SourceDirectory="$(StagingDir)" DestinationFile="$(ReleaseDir)/$(ZipName)" />
+        <RemoveDir Directories="$(StagingDir)" />
+        <Message Text="[PostBuild] Packaged $(ZipName)" Importance="high" />
         <Message Text="[PostBuild] Finished." Importance="high" />
     </Target>
 </Project>
