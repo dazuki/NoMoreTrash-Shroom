@@ -16,7 +16,7 @@ using ScheduleOne.Trash;
 using Il2CppScheduleOne.Trash;
 #endif
 
-[assembly: MelonInfo(typeof(NoMoreTrashMod), "NoMoreTrash-Shroom", "1.0.5", "Voidane (Temporary Fix by DazUki)")]
+[assembly: MelonInfo(typeof(NoMoreTrashMod), "NoMoreTrash-Shroom", "1.0.6", "Voidane (Temporary Fix by DazUki)")]
 [assembly: MelonGame("TVGS", "Schedule I")]
 [assembly: AssemblyMetadata("NexusModID", "1444")]
 #if !Mono
