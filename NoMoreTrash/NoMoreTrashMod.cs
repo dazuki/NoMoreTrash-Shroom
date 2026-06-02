@@ -68,6 +68,31 @@ namespace NoMoreTrash
 
             patcher.Patch(original, null, new HarmonyLib.HarmonyMethod(
                 typeof(NoMoreTrashMod).GetMethod(nameof(Patch_TrashItem_Start), BindingFlags.Static | BindingFlags.NonPublic)));
+
+            MethodInfo tmStart = AccessTools.Method(typeof(TrashManager), "Start");
+            if (tmStart != null)
+            {
+                HarmonyLib.HarmonyMethod scanPostfix = new(
+                    typeof(NoMoreTrashMod).GetMethod(nameof(Patch_TrashManager_Start), BindingFlags.Static | BindingFlags.NonPublic));
+                scanPostfix.priority = HarmonyLib.Priority.Last;
+                patcher.Patch(tmStart, null, scanPostfix);
+            }
+        }
+
+        private static void Patch_TrashManager_Start(TrashManager __instance)
+        {
+            if (__instance?.TrashPrefabs == null)
+            {
+                return;
+            }
+
+            string[] ids = __instance.TrashPrefabs
+                .Where(t => t != null)
+                .Select(t => t.ID)
+                .Where(id => !string.IsNullOrEmpty(id))
+                .ToArray();
+
+            ConfigData.ScanTrashPrefabs(ids);
         }
 
         private static void Patch_TrashItem_Start(TrashItem __instance)
@@ -81,10 +106,8 @@ namespace NoMoreTrash
             {
                 if (!ConfigData.TrashItems.TryGetValue(__instance.ID, out bool value))
                 {
-                    MelonLogger.Error($"could not find: {__instance.ID} in config");
-                    MelonLogger.Error($"This might be a new or custom item that needs to added to the config!");
-                    MelonLogger.Error($"Report here: discord.gg/XB7ruKtJje");
-                    return; // Don't crash or proceed if not found
+                    ConfigData.AddUnknownItem(__instance.ID);
+                    return;
                 }
 
                 if (value)
