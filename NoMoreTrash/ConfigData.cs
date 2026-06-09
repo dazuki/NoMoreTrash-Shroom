@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-
 using MelonLoader;
 
 namespace NoMoreTrash
@@ -52,8 +52,14 @@ namespace NoMoreTrash
         public ConfigData(MelonLogger.Instance logger)
         {
             _logger = logger;
-            UnknownItems = MelonPreferences.CreateCategory("NoMoreTrash-Shroom_Unknown", "Modded/Unknown Trash");
-            ClearTrash = MelonPreferences.CreateCategory("NoMoreTrash-Shroom_Vanilla", "Vanilla Trash");
+            UnknownItems = MelonPreferences.CreateCategory(
+                "NoMoreTrash-Shroom_Unknown",
+                "Modded/Unknown Trash"
+            );
+            ClearTrash = MelonPreferences.CreateCategory(
+                "NoMoreTrash-Shroom_Vanilla",
+                "Vanilla Trash"
+            );
 
             // Initialize entries
             Trashbag = ClearTrash.CreateEntry("trashbag", true, "Trash Bag");
@@ -85,12 +91,17 @@ namespace NoMoreTrash
             Pipe = ClearTrash.CreateEntry("pipe", true, "Pipe");
             Chemicaljug = ClearTrash.CreateEntry("chemicaljug", true, "Chemical Jug");
             M1911mag = ClearTrash.CreateEntry("m1911mag", true, "M1911 Magazine");
-            Revolvercylinder = ClearTrash.CreateEntry("revolvercylinder", true, "Revolver Cylinder");
+            Revolvercylinder = ClearTrash.CreateEntry(
+                "revolvercylinder",
+                true,
+                "Revolver Cylinder"
+            );
             Acid = ClearTrash.CreateEntry("acid", true, "Acid");
             Addy = ClearTrash.CreateEntry("addy", true, "Addy");
             Phosphorus = ClearTrash.CreateEntry("phosphorus", true, "Phosphorus");
             Substratebag = ClearTrash.CreateEntry("substratebag", true, "Mushroom Substrate");
 
+            LoadUnknownItemsFromCfg();
             MelonPreferences.Save();
 
             Reload();
@@ -139,14 +150,59 @@ namespace NoMoreTrash
             }
 
             MelonPreferences_Entry<bool> entry = UnknownItems.CreateEntry(id, false, id);
-            entry.OnEntryValueChanged.Subscribe((oldValue, newValue) =>
-            {
-                TrashItems[entry.Identifier] = newValue;
-                _logger.Msg($"{entry.DisplayName} changed: {oldValue} -> {newValue}");
-            });
+            entry.OnEntryValueChanged.Subscribe(
+                (oldValue, newValue) =>
+                {
+                    TrashItems[entry.Identifier] = newValue;
+                    _logger.Msg($"{entry.DisplayName} changed: {oldValue} -> {newValue}");
+                }
+            );
             TrashItems[id] = entry.Value;
             MelonPreferences.Save();
-            _logger.Warning($"Auto-detected unknown trash item '{id}' - added to config (default: off). Enable it in your mod manager.");
+            _logger.Warning(
+                $"Auto-detected unknown trash item '{id}' - added to config (default: off). Enable it in your mod manager."
+            );
+        }
+
+        private void LoadUnknownItemsFromCfg()
+        {
+            string cfgPath = Path.Combine(
+                System.Environment.CurrentDirectory,
+                "UserData",
+                "MelonPreferences.cfg"
+            );
+            if (!File.Exists(cfgPath))
+                return;
+
+            bool inSection = false;
+            foreach (string line in File.ReadLines(cfgPath))
+            {
+                string trimmed = line.Trim();
+                if (trimmed.StartsWith("["))
+                {
+                    inSection = trimmed == "[NoMoreTrash-Shroom_Unknown]";
+                    continue;
+                }
+                if (!inSection || string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("#"))
+                    continue;
+
+                int eq = trimmed.IndexOf('=');
+                if (eq <= 0)
+                    continue;
+
+                string id = trimmed.Substring(0, eq).Trim();
+                if (string.IsNullOrEmpty(id))
+                    continue;
+
+                MelonPreferences_Entry<bool> entry = UnknownItems.CreateEntry(id, false, id);
+                entry.OnEntryValueChanged.Subscribe(
+                    (oldValue, newValue) =>
+                    {
+                        TrashItems[entry.Identifier] = newValue;
+                        _logger.Msg($"{entry.DisplayName} changed: {oldValue} -> {newValue}");
+                    }
+                );
+            }
         }
 
         private void SubscribeToChanges()
@@ -160,11 +216,13 @@ namespace NoMoreTrash
                 var entry = (MelonPreferences_Entry<bool>)field.GetValue(null);
                 if (entry != null)
                 {
-                    entry.OnEntryValueChanged.Subscribe((oldValue, newValue) =>
-                    {
-                        TrashItems[entry.Identifier] = newValue;
-                        _logger.Msg($"{entry.DisplayName} changed: {oldValue} -> {newValue}");
-                    });
+                    entry.OnEntryValueChanged.Subscribe(
+                        (oldValue, newValue) =>
+                        {
+                            TrashItems[entry.Identifier] = newValue;
+                            _logger.Msg($"{entry.DisplayName} changed: {oldValue} -> {newValue}");
+                        }
+                    );
                 }
             }
         }

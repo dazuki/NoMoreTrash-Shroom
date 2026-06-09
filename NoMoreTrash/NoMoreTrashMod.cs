@@ -1,26 +1,28 @@
-using UnityEngine;
-
-using HarmonyLib;
-
-using MelonLoader;
-
-using NoMoreTrash;
-
 using System;
-using System.Reflection;
 using System.Linq;
-
+using System.Reflection;
+using HarmonyLib;
+using MelonLoader;
+using NoMoreTrash;
+using UnityEngine;
 #if Mono
 using ScheduleOne.Trash;
 #elif IL2CPP
 using Il2CppScheduleOne.Trash;
 #endif
 
-[assembly: MelonInfo(typeof(NoMoreTrashMod), "NoMoreTrash-Shroom", "1.0.6", "Voidane (Temporary Fix by DazUki)")]
+[assembly: MelonInfo(
+    typeof(NoMoreTrashMod),
+    "NoMoreTrash-Shroom",
+    "1.0.6",
+    "Voidane (Temporary Fix by DazUki)"
+)]
 [assembly: MelonGame("TVGS", "Schedule I")]
 [assembly: AssemblyMetadata("NexusModID", "1444")]
+
 #if !Mono
 [assembly: MelonOptionalDependencies("ModManager&PhoneApp")]
+
 #endif
 
 namespace NoMoreTrash
@@ -33,7 +35,9 @@ namespace NoMoreTrash
         {
             MelonLogger.Msg($"===========================================");
             MelonLogger.Msg($"Initializing, Original mod created by Voidane.");
-            MelonLogger.Msg($"This is a temporary fixed version made by DazUki to work with Shroom update.");
+            MelonLogger.Msg(
+                $"This is a temporary fixed version made by DazUki to work with Shroom update."
+            );
             MelonLogger.Msg($"NoMoreTrash Original: github.com/Voidane/NoMoreTrash");
             MelonLogger.Msg($"Discord: discord.gg/XB7ruKtJje");
 
@@ -66,14 +70,26 @@ namespace NoMoreTrash
                 return;
             }
 
-            patcher.Patch(original, null, new HarmonyLib.HarmonyMethod(
-                typeof(NoMoreTrashMod).GetMethod(nameof(Patch_TrashItem_Start), BindingFlags.Static | BindingFlags.NonPublic)));
+            patcher.Patch(
+                original,
+                null,
+                new HarmonyLib.HarmonyMethod(
+                    typeof(NoMoreTrashMod).GetMethod(
+                        nameof(Patch_TrashItem_Start),
+                        BindingFlags.Static | BindingFlags.NonPublic
+                    )
+                )
+            );
 
             MethodInfo tmStart = AccessTools.Method(typeof(TrashManager), "Start");
             if (tmStart != null)
             {
                 HarmonyLib.HarmonyMethod scanPostfix = new(
-                    typeof(NoMoreTrashMod).GetMethod(nameof(Patch_TrashManager_Start), BindingFlags.Static | BindingFlags.NonPublic));
+                    typeof(NoMoreTrashMod).GetMethod(
+                        nameof(Patch_TrashManager_Start),
+                        BindingFlags.Static | BindingFlags.NonPublic
+                    )
+                );
                 scanPostfix.priority = HarmonyLib.Priority.Last;
                 patcher.Patch(tmStart, null, scanPostfix);
             }
@@ -86,8 +102,8 @@ namespace NoMoreTrash
                 return;
             }
 
-            string[] ids = __instance.TrashPrefabs
-                .Where(t => t != null)
+            string[] ids = __instance
+                .TrashPrefabs.Where(t => t != null)
                 .Select(t => t.ID)
                 .Where(id => !string.IsNullOrEmpty(id))
                 .ToArray();
@@ -125,7 +141,9 @@ namespace NoMoreTrash
         {
             try
             {
-                _modManagerFound = MelonBase.RegisteredMelons.Any(mod => mod?.Info?.Name == "Mod Manager & Phone App");
+                _modManagerFound = MelonBase.RegisteredMelons.Any(mod =>
+                    mod?.Info?.Name == "Mod Manager & Phone App"
+                );
                 if (_modManagerFound)
                 {
                     MelonLogger.Msg("Mod Manager detected. Enabling dynamic settings...");
@@ -144,7 +162,8 @@ namespace NoMoreTrash
             try
             {
                 // Use reflection to access ModManager APIs since it's an optional dependency
-                var modManagerAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                var modManagerAssembly = AppDomain
+                    .CurrentDomain.GetAssemblies()
                     .FirstOrDefault(a => a.GetName().Name == "ModManager&PhoneApp");
 
                 if (modManagerAssembly == null)
@@ -201,12 +220,15 @@ namespace NoMoreTrash
             try
             {
                 // Use reflection to unsubscribe from ModManager events
-                var modManagerAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                var modManagerAssembly = AppDomain
+                    .CurrentDomain.GetAssemblies()
                     .FirstOrDefault(a => a.GetName().Name == "ModManager&PhoneApp");
 
                 if (modManagerAssembly != null)
                 {
-                    var eventsType = modManagerAssembly.GetType("ModManagerPhoneApp.ModSettingsEvents");
+                    var eventsType = modManagerAssembly.GetType(
+                        "ModManagerPhoneApp.ModSettingsEvents"
+                    );
                     if (eventsType != null)
                     {
                         var onPhoneSavedEvent = eventsType.GetEvent("OnPhonePreferencesSaved");
@@ -228,6 +250,7 @@ namespace NoMoreTrash
         }
 #else
         private void InitializeModManager() { }
+
         private void DeinitializeModManager() { }
 #endif
     }
