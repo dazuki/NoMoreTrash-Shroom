@@ -62,50 +62,55 @@ namespace NoMoreTrash
             );
 
             // Initialize entries
-            Trashbag = ClearTrash.CreateEntry("trashbag", true, "Trash Bag");
-            Soilbag = ClearTrash.CreateEntry("soilbag", true, "Soil");
-            Soilbag2 = ClearTrash.CreateEntry("soilbag2", true, "Long-Life Soil");
-            Soilbag3 = ClearTrash.CreateEntry("soilbag3", true, "Extra Long-Life Soil");
-            Seedvial = ClearTrash.CreateEntry("seedvial", true, "Seed Vials");
-            Speedgrow = ClearTrash.CreateEntry("speedgrow", true, "Speed Grow");
-            Fertilizer = ClearTrash.CreateEntry("fertilizer", true, "Fertilizer");
-            Pgr = ClearTrash.CreateEntry("pgr", true, "PGR");
-            Cuke = ClearTrash.CreateEntry("cuke", true, "Cuke");
-            Gasoline = ClearTrash.CreateEntry("gasoline", true, "Gasoline");
-            Mouthwash = ClearTrash.CreateEntry("mouthwash", true, "Mouth Wash");
-            Motoroil = ClearTrash.CreateEntry("motoroil", true, "Motor Oil");
-            Iodine = ClearTrash.CreateEntry("iodine", true, "Iodine");
-            Energydrink = ClearTrash.CreateEntry("energydrink", true, "Energy Drink");
-            Flumedicine = ClearTrash.CreateEntry("flumedicine", true, "Flu Medicine");
-            Plantscrap = ClearTrash.CreateEntry("plantscrap", true, "Plant Scrap");
-            Cigarette = ClearTrash.CreateEntry("cigarette", true, "Cigarette");
-            Usedcigarette = ClearTrash.CreateEntry("usedcigarette", true, "Used Cigarette");
-            Cigarettebox = ClearTrash.CreateEntry("cigarettebox", true, "Cigarette Pack");
-            Coffeecup = ClearTrash.CreateEntry("coffeecup", true, "Coffe Cup");
-            Crushedcuke = ClearTrash.CreateEntry("crushedcuke", true, "Crushed Cuke");
-            Glassbottle = ClearTrash.CreateEntry("glassbottle", true, "Glass Bottle");
-            Litter1 = ClearTrash.CreateEntry("litter1", true, "Litter");
-            Waterbottle = ClearTrash.CreateEntry("waterbottle", true, "Water Bottle");
-            Bong = ClearTrash.CreateEntry("bong", true, "Bong");
-            Syringe = ClearTrash.CreateEntry("syringe", true, "Syringe");
-            Pipe = ClearTrash.CreateEntry("pipe", true, "Pipe");
-            Chemicaljug = ClearTrash.CreateEntry("chemicaljug", true, "Chemical Jug");
-            M1911mag = ClearTrash.CreateEntry("m1911mag", true, "M1911 Magazine");
-            Revolvercylinder = ClearTrash.CreateEntry(
-                "revolvercylinder",
-                true,
-                "Revolver Cylinder"
-            );
-            Acid = ClearTrash.CreateEntry("acid", true, "Acid");
-            Addy = ClearTrash.CreateEntry("addy", true, "Addy");
-            Phosphorus = ClearTrash.CreateEntry("phosphorus", true, "Phosphorus");
-            Substratebag = ClearTrash.CreateEntry("substratebag", true, "Mushroom Substrate");
+            Trashbag = CreateVanillaEntry("trashbag", "Trash Bag");
+            Soilbag = CreateVanillaEntry("soilbag", "Soil");
+            Soilbag2 = CreateVanillaEntry("soilbag2", "Long-Life Soil");
+            Soilbag3 = CreateVanillaEntry("soilbag3", "Extra Long-Life Soil");
+            Seedvial = CreateVanillaEntry("seedvial", "Seed Vials");
+            Speedgrow = CreateVanillaEntry("speedgrow", "Speed Grow");
+            Fertilizer = CreateVanillaEntry("fertilizer", "Fertilizer");
+            Pgr = CreateVanillaEntry("pgr", "PGR");
+            Cuke = CreateVanillaEntry("cuke", "Cuke");
+            Gasoline = CreateVanillaEntry("gasoline", "Gasoline");
+            Mouthwash = CreateVanillaEntry("mouthwash", "Mouth Wash");
+            Motoroil = CreateVanillaEntry("motoroil", "Motor Oil");
+            Iodine = CreateVanillaEntry("iodine", "Iodine");
+            Energydrink = CreateVanillaEntry("energydrink", "Energy Drink");
+            Flumedicine = CreateVanillaEntry("flumedicine", "Flu Medicine");
+            Plantscrap = CreateVanillaEntry("plantscrap", "Plant Scrap");
+            Cigarette = CreateVanillaEntry("cigarette", "Cigarette");
+            Usedcigarette = CreateVanillaEntry("usedcigarette", "Used Cigarette");
+            Cigarettebox = CreateVanillaEntry("cigarettebox", "Cigarette Pack");
+            Coffeecup = CreateVanillaEntry("coffeecup", "Coffe Cup");
+            Crushedcuke = CreateVanillaEntry("crushedcuke", "Crushed Cuke");
+            Glassbottle = CreateVanillaEntry("glassbottle", "Glass Bottle");
+            Litter1 = CreateVanillaEntry("litter1", "Litter");
+            Waterbottle = CreateVanillaEntry("waterbottle", "Water Bottle");
+            Bong = CreateVanillaEntry("bong", "Bong");
+            Syringe = CreateVanillaEntry("syringe", "Syringe");
+            Pipe = CreateVanillaEntry("pipe", "Pipe");
+            Chemicaljug = CreateVanillaEntry("chemicaljug", "Chemical Jug");
+            M1911mag = CreateVanillaEntry("m1911mag", "M1911 Magazine");
+            Revolvercylinder = CreateVanillaEntry("revolvercylinder", "Revolver Cylinder");
+            Acid = CreateVanillaEntry("acid", "Acid");
+            Addy = CreateVanillaEntry("addy", "Addy");
+            Phosphorus = CreateVanillaEntry("phosphorus", "Phosphorus");
+            Substratebag = CreateVanillaEntry("substratebag", "Mushroom Substrate");
 
             LoadUnknownItemsFromCfg();
             MelonPreferences.Save();
 
             Reload();
             SubscribeToChanges();
+        }
+
+        // Description carries the item code so mod managers show which prefab an entry maps to.
+        private static MelonPreferences_Entry<bool> CreateVanillaEntry(
+            string id,
+            string displayName
+        )
+        {
+            return ClearTrash.CreateEntry(id, true, displayName, $"ID: {id}");
         }
 
         public void Reload()
@@ -149,14 +154,7 @@ namespace NoMoreTrash
                 return;
             }
 
-            MelonPreferences_Entry<bool> entry = UnknownItems.CreateEntry(id, false, id);
-            entry.OnEntryValueChanged.Subscribe(
-                (oldValue, newValue) =>
-                {
-                    TrashItems[entry.Identifier] = newValue;
-                    _logger.Msg($"{entry.DisplayName} changed: {oldValue} -> {newValue}");
-                }
-            );
+            MelonPreferences_Entry<bool> entry = CreateUnknownEntry(id);
             TrashItems[id] = entry.Value;
             MelonPreferences.Save();
             _logger.Warning(
@@ -194,15 +192,26 @@ namespace NoMoreTrash
                 if (string.IsNullOrEmpty(id))
                     continue;
 
-                MelonPreferences_Entry<bool> entry = UnknownItems.CreateEntry(id, false, id);
-                entry.OnEntryValueChanged.Subscribe(
-                    (oldValue, newValue) =>
-                    {
-                        TrashItems[entry.Identifier] = newValue;
-                        _logger.Msg($"{entry.DisplayName} changed: {oldValue} -> {newValue}");
-                    }
-                );
+                CreateUnknownEntry(id);
             }
+        }
+
+        private MelonPreferences_Entry<bool> CreateUnknownEntry(string id)
+        {
+            MelonPreferences_Entry<bool> entry = UnknownItems.CreateEntry(
+                id,
+                false,
+                id,
+                $"ID: {id}"
+            );
+            entry.OnEntryValueChanged.Subscribe(
+                (oldValue, newValue) =>
+                {
+                    TrashItems[entry.Identifier] = newValue;
+                    _logger.Msg($"{entry.DisplayName} changed: {oldValue} -> {newValue}");
+                }
+            );
+            return entry;
         }
 
         private void SubscribeToChanges()
