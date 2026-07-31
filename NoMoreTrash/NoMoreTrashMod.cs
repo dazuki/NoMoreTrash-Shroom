@@ -33,20 +33,18 @@ namespace NoMoreTrash
 
         public override void OnInitializeMelon()
         {
-            MelonLogger.Msg($"===========================================");
-            MelonLogger.Msg($"Initializing, Original mod created by Voidane.");
-            MelonLogger.Msg(
-                $"This is a temporary fixed version made by DazUki to work with Shroom update."
-            );
-            MelonLogger.Msg($"NoMoreTrash Original: github.com/Voidane/NoMoreTrash");
-            MelonLogger.Msg($"Discord: discord.gg/XB7ruKtJje");
+            MelonLogger.Msg($"NoMoreTrash (Original");
+            MelonLogger.Msg($"- https://github.com/Voidane/NoMoreTrash");
+            MelonLogger.Msg($"NoMoreTrash Fork (This Mod)");
+            MelonLogger.Msg($"- https://github.com/dazuki/NoMoreTrash-Shroom");
+            MelonLogger.Msg($"Voidane Discord");
+            MelonLogger.Msg($"- https://discord.gg/XB7ruKtJje");
 
             ConfigData = new ConfigData(LoggerInstance);
             InitializeModManager();
             HarmonyPatches();
 
-            MelonLogger.Msg($"NoMoreTrash has been initialized...");
-            MelonLogger.Msg($"===========================================");
+            MelonLogger.Msg($"NoMoreTrash-Shroom has been initialized...");
         }
 
         public override void OnDeinitializeMelon()
@@ -99,6 +97,7 @@ namespace NoMoreTrash
         {
             if (__instance?.TrashPrefabs == null)
             {
+                ConfigData.Log("prefab scan: TrashManager.TrashPrefabs was null, skipped");
                 return;
             }
 
@@ -128,7 +127,12 @@ namespace NoMoreTrash
 
                 if (value)
                 {
+                    ConfigData.Log($"spawn: destroying '{__instance.ID}'");
                     __instance.DestroyTrash();
+                }
+                else
+                {
+                    ConfigData.Log($"spawn: keeping '{__instance.ID}' (disabled in config)");
                 }
             }
         }

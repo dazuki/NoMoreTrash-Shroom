@@ -8,8 +8,12 @@ namespace NoMoreTrash
 {
     public class ConfigData
     {
+        public static MelonPreferences_Category General;
         public static MelonPreferences_Category ClearTrash;
         public static MelonPreferences_Category UnknownItems;
+
+        public static MelonPreferences_Entry<bool> DebugLogging { get; private set; }
+
         public static MelonPreferences_Entry<bool> Soilbag;
         public static MelonPreferences_Entry<bool> Soilbag2;
         public static MelonPreferences_Entry<bool> Seedvial;
@@ -52,6 +56,7 @@ namespace NoMoreTrash
         public ConfigData(MelonLogger.Instance logger)
         {
             _logger = logger;
+            General = MelonPreferences.CreateCategory("NoMoreTrash-Shroom_General", "General");
             UnknownItems = MelonPreferences.CreateCategory(
                 "NoMoreTrash-Shroom_Unknown",
                 "Modded/Unknown Trash"
@@ -59,6 +64,13 @@ namespace NoMoreTrash
             ClearTrash = MelonPreferences.CreateCategory(
                 "NoMoreTrash-Shroom_Vanilla",
                 "Vanilla Trash"
+            );
+
+            DebugLogging = General.CreateEntry(
+                "DebugLogging",
+                false,
+                "Debug Logging",
+                "Log extra info for troubleshooting."
             );
 
             // Initialize entries
@@ -113,6 +125,14 @@ namespace NoMoreTrash
             return ClearTrash.CreateEntry(id, true, displayName, $"ID: {id}");
         }
 
+        public void Log(string message)
+        {
+            if (DebugLogging != null && DebugLogging.Value)
+            {
+                _logger.Msg($"[Debug] {message}");
+            }
+        }
+
         public void Reload()
         {
             TrashItems = [];
@@ -141,6 +161,8 @@ namespace NoMoreTrash
 
         public void ScanTrashPrefabs(string[] ids)
         {
+            Log($"prefab scan: TrashManager exposes {ids.Length} ids [{string.Join(", ", ids)}]");
+
             foreach (string id in ids)
             {
                 AddUnknownItem(id);
