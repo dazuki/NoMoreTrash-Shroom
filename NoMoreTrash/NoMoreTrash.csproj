@@ -207,7 +207,8 @@
   </ItemGroup>
   <PropertyGroup>
     <ReleaseDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\Releases'))</ReleaseDir>
-    <StagingDir>$(ReleaseDir)\_staging</StagingDir>
+    <!-- Per-TFM so parallel solution builds don't wipe each other's staging -->
+    <StagingDir>$(ReleaseDir)\_staging_$(TargetFramework)</StagingDir>
     <ZipName Condition="'$(TargetFramework)' == 'netstandard2.1'"
       >NoMoreTrash-Shroom_Mono.zip</ZipName>
     <ZipName Condition="'$(TargetFramework)' == 'net6.0'">NoMoreTrash-Shroom_IL2CPP.zip</ZipName>
