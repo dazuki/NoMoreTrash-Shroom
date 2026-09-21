@@ -33,18 +33,18 @@ namespace NoMoreTrash
 
         public override void OnInitializeMelon()
         {
-            MelonLogger.Msg($"NoMoreTrash (Original");
-            MelonLogger.Msg($"- https://github.com/Voidane/NoMoreTrash");
-            MelonLogger.Msg($"NoMoreTrash Fork (This Mod)");
-            MelonLogger.Msg($"- https://github.com/dazuki/NoMoreTrash-Shroom");
-            MelonLogger.Msg($"Voidane Discord");
-            MelonLogger.Msg($"- https://discord.gg/XB7ruKtJje");
+            LoggerInstance.Msg($"NoMoreTrash (Original");
+            LoggerInstance.Msg($"- https://github.com/Voidane/NoMoreTrash");
+            LoggerInstance.Msg($"NoMoreTrash Fork (This Mod)");
+            LoggerInstance.Msg($"- https://github.com/dazuki/NoMoreTrash-Shroom");
+            LoggerInstance.Msg($"Voidane Discord");
+            LoggerInstance.Msg($"- https://discord.gg/XB7ruKtJje");
 
             ConfigData = new ConfigData(LoggerInstance);
             InitializeModManager();
             HarmonyPatches();
 
-            MelonLogger.Msg($"NoMoreTrash-Shroom has been initialized...");
+            LoggerInstance.Msg($"NoMoreTrash-Shroom has been initialized...");
         }
 
         public override void OnDeinitializeMelon()
@@ -61,10 +61,12 @@ namespace NoMoreTrash
         {
             HarmonyLib.Harmony patcher = new("com.voidane.nomoretrash");
 
-            MethodInfo original = AccessTools.Method(typeof(TrashItem), "Start");
+            // Must stay a postfix: Initialize calls SetGUID, and DestroyTrash resolves the item
+            // by GUID through the TrashManager RPC. A prefix would run before registration.
+            MethodInfo original = AccessTools.Method(typeof(TrashItem), "Initialize");
             if (original == null)
             {
-                MelonLogger.Error("Failed to find 'Start' method on TrashItem.");
+                LoggerInstance.Error("Failed to find 'Initialize' method on TrashItem.");
                 return;
             }
 
@@ -73,7 +75,7 @@ namespace NoMoreTrash
                 null,
                 new HarmonyLib.HarmonyMethod(
                     typeof(NoMoreTrashMod).GetMethod(
-                        nameof(Patch_TrashItem_Start),
+                        nameof(Patch_TrashItem_Initialize),
                         BindingFlags.Static | BindingFlags.NonPublic
                     )
                 )
@@ -110,7 +112,7 @@ namespace NoMoreTrash
             ConfigData.ScanTrashPrefabs(ids);
         }
 
-        private static void Patch_TrashItem_Start(TrashItem __instance)
+        private static void Patch_TrashItem_Initialize(TrashItem __instance)
         {
             if (__instance == null || __instance.transform.parent == null)
             {
@@ -150,13 +152,13 @@ namespace NoMoreTrash
                 );
                 if (_modManagerFound)
                 {
-                    MelonLogger.Msg("Mod Manager detected. Enabling dynamic settings...");
+                    LoggerInstance.Msg("Mod Manager detected. Enabling dynamic settings...");
                     SubscribeToModManagerEvents_Helper();
                 }
             }
             catch (Exception ex)
             {
-                MelonLogger.Error($"Error checking for Mod Manager: {ex}");
+                LoggerInstance.Error($"Error checking for Mod Manager: {ex}");
                 _modManagerFound = false;
             }
         }
@@ -172,7 +174,7 @@ namespace NoMoreTrash
 
                 if (modManagerAssembly == null)
                 {
-                    MelonLogger.Warning("ModManager assembly not found.");
+                    LoggerInstance.Warning("ModManager assembly not found.");
                     _modManagerFound = false;
                     return;
                 }
@@ -180,7 +182,7 @@ namespace NoMoreTrash
                 var eventsType = modManagerAssembly.GetType("ModManagerPhoneApp.ModSettingsEvents");
                 if (eventsType == null)
                 {
-                    MelonLogger.Warning("ModSettingsEvents type not found in ModManager.");
+                    LoggerInstance.Warning("ModSettingsEvents type not found in ModManager.");
                     _modManagerFound = false;
                     return;
                 }
@@ -193,24 +195,24 @@ namespace NoMoreTrash
                     var handlerDelegate = new Action(HandleSettingsUpdate);
                     onPhoneSavedEvent.AddEventHandler(null, handlerDelegate);
                     onMenuSavedEvent.AddEventHandler(null, handlerDelegate);
-                    MelonLogger.Msg("Successfully subscribed to Mod Manager events.");
+                    LoggerInstance.Msg("Successfully subscribed to Mod Manager events.");
                 }
                 else
                 {
-                    MelonLogger.Warning("Could not find ModManager events.");
+                    LoggerInstance.Warning("Could not find ModManager events.");
                     _modManagerFound = false;
                 }
             }
             catch (Exception ex)
             {
-                MelonLogger.Error($"Unexpected error during subscription: {ex}");
+                LoggerInstance.Error($"Unexpected error during subscription: {ex}");
                 _modManagerFound = false;
             }
         }
 
         private void HandleSettingsUpdate()
         {
-            MelonLogger.Msg("Dynamic settings update triggered.");
+            LoggerInstance.Msg("Dynamic settings update triggered.");
             ConfigData.Reload();
         }
 
@@ -249,7 +251,7 @@ namespace NoMoreTrash
             }
             catch (Exception ex)
             {
-                MelonLogger.Warning($"Error during unsubscribe: {ex.Message}");
+                LoggerInstance.Warning($"Error during unsubscribe: {ex.Message}");
             }
         }
 #else

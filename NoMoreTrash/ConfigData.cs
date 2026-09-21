@@ -48,6 +48,7 @@ namespace NoMoreTrash
         public static MelonPreferences_Entry<bool> Addy;
         public static MelonPreferences_Entry<bool> Phosphorus;
         public static MelonPreferences_Entry<bool> Substratebag;
+        public static MelonPreferences_Entry<bool> Tabletennisball;
 
         public Dictionary<string, bool> TrashItems;
 
@@ -109,6 +110,13 @@ namespace NoMoreTrash
             Phosphorus = CreateVanillaEntry("phosphorus", "Phosphorus");
             Substratebag = CreateVanillaEntry("substratebag", "Mushroom Substrate");
 
+            // New in 0.4.7. Defaults off until the spawn locations are known.
+            Tabletennisball = CreateVanillaEntry(
+                "tabletennisball",
+                "Table Tennis Ball",
+                defaultValue: false
+            );
+
             LoadUnknownItemsFromCfg();
             MelonPreferences.Save();
 
@@ -119,10 +127,11 @@ namespace NoMoreTrash
         // Description carries the item code so mod managers show which prefab an entry maps to.
         private static MelonPreferences_Entry<bool> CreateVanillaEntry(
             string id,
-            string displayName
+            string displayName,
+            bool defaultValue = true
         )
         {
-            return ClearTrash.CreateEntry(id, true, displayName, $"ID: {id}");
+            return ClearTrash.CreateEntry(id, defaultValue, displayName, $"ID: {id}");
         }
 
         public void Log(string message)
@@ -150,9 +159,13 @@ namespace NoMoreTrash
                 }
             }
 
+            // Vanilla entries win: an id present in both categories is one mid-migration.
             foreach (var entry in UnknownItems.Entries)
             {
-                if (entry is MelonPreferences_Entry<bool> boolEntry)
+                if (
+                    entry is MelonPreferences_Entry<bool> boolEntry
+                    && !TrashItems.ContainsKey(boolEntry.Identifier)
+                )
                 {
                     TrashItems[boolEntry.Identifier] = boolEntry.Value;
                 }
@@ -213,6 +226,16 @@ namespace NoMoreTrash
                 string id = trimmed.Substring(0, eq).Trim();
                 if (string.IsNullOrEmpty(id))
                     continue;
+
+                // An item auto-detected on an older version may since have been promoted to a
+                // vanilla entry. Drop the stale unknown copy instead of registering a duplicate
+                // that would shadow the vanilla one in Reload().
+                if (ClearTrash.HasEntry(id))
+                {
+                    UnknownItems.DeleteEntry(id);
+                    _logger.Msg($"Migrated '{id}' from Modded/Unknown to Vanilla Trash.");
+                    continue;
+                }
 
                 CreateUnknownEntry(id);
             }
