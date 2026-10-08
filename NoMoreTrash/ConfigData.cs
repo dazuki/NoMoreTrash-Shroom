@@ -1,288 +1,195 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using MelonLoader;
+using MelonLoader.Utils;
 
-namespace NoMoreTrash
+namespace NoMoreTrash;
+
+public class ConfigData
 {
-    public class ConfigData
+    private const string UnknownCategoryId = "NoMoreTrash-Shroom_Unknown";
+
+    private static readonly TrashType[] VanillaTrash =
+    [
+        new("trashbag", "Trash Bag"),
+        new("soilbag", "Soil"),
+        new("soilbag2", "Long-Life Soil"),
+        new("soilbag3", "Extra Long-Life Soil"),
+        new("seedvial", "Seed Vials"),
+        new("speedgrow", "Speed Grow"),
+        new("fertilizer", "Fertilizer"),
+        new("pgr", "PGR"),
+        new("cuke", "Cuke"),
+        new("gasoline", "Gasoline"),
+        new("mouthwash", "Mouth Wash"),
+        new("motoroil", "Motor Oil"),
+        new("iodine", "Iodine"),
+        new("energydrink", "Energy Drink"),
+        new("flumedicine", "Flu Medicine"),
+        new("plantscrap", "Plant Scrap"),
+        new("cigarette", "Cigarette"),
+        new("usedcigarette", "Used Cigarette"),
+        new("cigarettebox", "Cigarette Pack"),
+        new("coffeecup", "Coffe Cup"),
+        new("crushedcuke", "Crushed Cuke"),
+        new("glassbottle", "Glass Bottle"),
+        new("litter1", "Litter"),
+        new("waterbottle", "Water Bottle"),
+        new("bong", "Bong"),
+        new("syringe", "Syringe"),
+        new("pipe", "Pipe"),
+        new("chemicaljug", "Chemical Jug"),
+        new("m1911mag", "M1911 Magazine"),
+        new("revolvercylinder", "Revolver Cylinder"),
+        new("acid", "Acid"),
+        new("addy", "Addy"),
+        new("phosphorus", "Phosphorus"),
+        new("substratebag", "Mushroom Substrate"),
+        // Its spawner respawns it on destroy, so only clear it while a save loads.
+        new("tabletennisball", "Beer Pong Ball", loadOnly: true),
+    ];
+
+    private readonly MelonLogger.Instance _logger;
+    private readonly MelonPreferences_Entry<bool> _debugLogging;
+    private readonly MelonPreferences_Category _unknownCategory;
+    private readonly Dictionary<string, MelonPreferences_Entry<bool>> _entries = [];
+    private readonly HashSet<string> _loadOnlyIds = [];
+
+    public ConfigData(MelonLogger.Instance logger)
     {
-        public static MelonPreferences_Category General;
-        public static MelonPreferences_Category ClearTrash;
-        public static MelonPreferences_Category UnknownItems;
+        _logger = logger;
 
-        public static MelonPreferences_Entry<bool> DebugLogging { get; private set; }
+        // Ids are the cfg format, do not rename.
+        MelonPreferences_Category general = MelonPreferences.CreateCategory(
+            "NoMoreTrash-Shroom_General",
+            "General"
+        );
+        _unknownCategory = MelonPreferences.CreateCategory(
+            UnknownCategoryId,
+            "Modded/Unknown Trash"
+        );
+        MelonPreferences_Category vanillaCategory = MelonPreferences.CreateCategory(
+            "NoMoreTrash-Shroom_Vanilla",
+            "Vanilla Trash"
+        );
 
-        public static MelonPreferences_Entry<bool> Soilbag;
-        public static MelonPreferences_Entry<bool> Soilbag2;
-        public static MelonPreferences_Entry<bool> Seedvial;
-        public static MelonPreferences_Entry<bool> Cuke;
-        public static MelonPreferences_Entry<bool> Pgr;
-        public static MelonPreferences_Entry<bool> Speedgrow;
-        public static MelonPreferences_Entry<bool> Fertilizer;
-        public static MelonPreferences_Entry<bool> Plantscrap;
-        public static MelonPreferences_Entry<bool> Trashbag;
-        public static MelonPreferences_Entry<bool> Soilbag3;
-        public static MelonPreferences_Entry<bool> Cigarette;
-        public static MelonPreferences_Entry<bool> Usedcigarette;
-        public static MelonPreferences_Entry<bool> Cigarettebox;
-        public static MelonPreferences_Entry<bool> Coffeecup;
-        public static MelonPreferences_Entry<bool> Crushedcuke;
-        public static MelonPreferences_Entry<bool> Glassbottle;
-        public static MelonPreferences_Entry<bool> Litter1;
-        public static MelonPreferences_Entry<bool> Waterbottle;
-        public static MelonPreferences_Entry<bool> Energydrink;
-        public static MelonPreferences_Entry<bool> Flumedicine;
-        public static MelonPreferences_Entry<bool> Gasoline;
-        public static MelonPreferences_Entry<bool> Mouthwash;
-        public static MelonPreferences_Entry<bool> Motoroil;
-        public static MelonPreferences_Entry<bool> Iodine;
-        public static MelonPreferences_Entry<bool> Bong;
-        public static MelonPreferences_Entry<bool> Syringe;
-        public static MelonPreferences_Entry<bool> Pipe;
-        public static MelonPreferences_Entry<bool> Chemicaljug;
-        public static MelonPreferences_Entry<bool> M1911mag;
-        public static MelonPreferences_Entry<bool> Revolvercylinder;
-        public static MelonPreferences_Entry<bool> Acid;
-        public static MelonPreferences_Entry<bool> Addy;
-        public static MelonPreferences_Entry<bool> Phosphorus;
-        public static MelonPreferences_Entry<bool> Substratebag;
-        public static MelonPreferences_Entry<bool> BeerPongBall;
+        _debugLogging = general.CreateEntry(
+            "DebugLogging",
+            false,
+            "Debug Logging",
+            "Log extra info for troubleshooting."
+        );
 
-        public const string BeerPongBallId = "tabletennisball";
-
-        public Dictionary<string, bool> TrashItems;
-
-        private readonly MelonLogger.Instance _logger;
-
-        public ConfigData(MelonLogger.Instance logger)
+        foreach (TrashType trash in VanillaTrash)
         {
-            _logger = logger;
-            General = MelonPreferences.CreateCategory("NoMoreTrash-Shroom_General", "General");
-            UnknownItems = MelonPreferences.CreateCategory(
-                "NoMoreTrash-Shroom_Unknown",
-                "Modded/Unknown Trash"
-            );
-            ClearTrash = MelonPreferences.CreateCategory(
-                "NoMoreTrash-Shroom_Vanilla",
-                "Vanilla Trash"
-            );
-
-            DebugLogging = General.CreateEntry(
-                "DebugLogging",
-                false,
-                "Debug Logging",
-                "Log extra info for troubleshooting."
-            );
-
-            // Initialize entries
-            Trashbag = CreateVanillaEntry("trashbag", "Trash Bag");
-            Soilbag = CreateVanillaEntry("soilbag", "Soil");
-            Soilbag2 = CreateVanillaEntry("soilbag2", "Long-Life Soil");
-            Soilbag3 = CreateVanillaEntry("soilbag3", "Extra Long-Life Soil");
-            Seedvial = CreateVanillaEntry("seedvial", "Seed Vials");
-            Speedgrow = CreateVanillaEntry("speedgrow", "Speed Grow");
-            Fertilizer = CreateVanillaEntry("fertilizer", "Fertilizer");
-            Pgr = CreateVanillaEntry("pgr", "PGR");
-            Cuke = CreateVanillaEntry("cuke", "Cuke");
-            Gasoline = CreateVanillaEntry("gasoline", "Gasoline");
-            Mouthwash = CreateVanillaEntry("mouthwash", "Mouth Wash");
-            Motoroil = CreateVanillaEntry("motoroil", "Motor Oil");
-            Iodine = CreateVanillaEntry("iodine", "Iodine");
-            Energydrink = CreateVanillaEntry("energydrink", "Energy Drink");
-            Flumedicine = CreateVanillaEntry("flumedicine", "Flu Medicine");
-            Plantscrap = CreateVanillaEntry("plantscrap", "Plant Scrap");
-            Cigarette = CreateVanillaEntry("cigarette", "Cigarette");
-            Usedcigarette = CreateVanillaEntry("usedcigarette", "Used Cigarette");
-            Cigarettebox = CreateVanillaEntry("cigarettebox", "Cigarette Pack");
-            Coffeecup = CreateVanillaEntry("coffeecup", "Coffe Cup");
-            Crushedcuke = CreateVanillaEntry("crushedcuke", "Crushed Cuke");
-            Glassbottle = CreateVanillaEntry("glassbottle", "Glass Bottle");
-            Litter1 = CreateVanillaEntry("litter1", "Litter");
-            Waterbottle = CreateVanillaEntry("waterbottle", "Water Bottle");
-            Bong = CreateVanillaEntry("bong", "Bong");
-            Syringe = CreateVanillaEntry("syringe", "Syringe");
-            Pipe = CreateVanillaEntry("pipe", "Pipe");
-            Chemicaljug = CreateVanillaEntry("chemicaljug", "Chemical Jug");
-            M1911mag = CreateVanillaEntry("m1911mag", "M1911 Magazine");
-            Revolvercylinder = CreateVanillaEntry("revolvercylinder", "Revolver Cylinder");
-            Acid = CreateVanillaEntry("acid", "Acid");
-            Addy = CreateVanillaEntry("addy", "Addy");
-            Phosphorus = CreateVanillaEntry("phosphorus", "Phosphorus");
-            Substratebag = CreateVanillaEntry("substratebag", "Mushroom Substrate");
-
-            // New in 0.4.7. Prefab id is "tabletennisball", but it is the beer pong ball.
-            BeerPongBall = CreateVanillaEntry(
-                BeerPongBallId,
-                "Beer Pong Ball",
-                note: "Only stray balls are cleared, while a save loads. The table's ball is never touched."
-            );
-
-            LoadUnknownItemsFromCfg();
-            MelonPreferences.Save();
-
-            Reload();
-            SubscribeToChanges();
+            AddEntry(vanillaCategory, trash.Id, trash.Name, true, trash.LoadOnly);
         }
 
-        // Description carries the item code so mod managers show which prefab an entry maps to.
-        private static MelonPreferences_Entry<bool> CreateVanillaEntry(
-            string id,
-            string displayName,
-            bool defaultValue = true,
-            string note = null
-        )
-        {
-            string description = note == null ? $"ID: {id}" : $"ID: {id} - {note}";
-            return ClearTrash.CreateEntry(id, defaultValue, displayName, description);
-        }
+        LoadUnknownItemsFromCfg();
+        MelonPreferences.Save();
+    }
 
-        public void Log(string message)
+    // Unknown ids get registered as a new entry (default off).
+    public bool IsEnabled(string id)
+    {
+        if (_entries.TryGetValue(id, out MelonPreferences_Entry<bool> entry))
+            return entry.Value;
+
+        AddUnknownItem(id);
+        return false;
+    }
+
+    public bool IsLoadOnly(string id) => _loadOnlyIds.Contains(id);
+
+    public void Log(string message)
+    {
+        if (_debugLogging.Value)
+            _logger.Msg($"[Debug] {message}");
+    }
+
+    public void ScanTrashPrefabs(string[] ids)
+    {
+        Log($"prefab scan: TrashManager exposes {ids.Length} ids [{string.Join(", ", ids)}]");
+
+        foreach (string id in ids)
         {
-            if (DebugLogging != null && DebugLogging.Value)
+            AddUnknownItem(id);
+        }
+    }
+
+    private void AddUnknownItem(string id)
+    {
+        if (_entries.ContainsKey(id))
+            return;
+
+        AddEntry(_unknownCategory, id, id, false);
+        MelonPreferences.Save();
+        _logger.Warning(
+            $"Auto-detected unknown trash item '{id}' - added to config (default: off). Enable it in your mod manager."
+        );
+    }
+
+    private void AddEntry(
+        MelonPreferences_Category category,
+        string id,
+        string displayName,
+        bool defaultValue,
+        bool loadOnly = false
+    )
+    {
+        string note = loadOnly ? " - Only cleared while a save loads, never during play." : "";
+        MelonPreferences_Entry<bool> entry = category.CreateEntry(
+            id,
+            defaultValue,
+            displayName,
+            $"ID: {id}{note}"
+        );
+        entry.OnEntryValueChanged.Subscribe(
+            (oldValue, newValue) => _logger.Msg($"{displayName} changed: {oldValue} -> {newValue}")
+        );
+        _entries[id] = entry;
+        if (loadOnly)
+            _loadOnlyIds.Add(id);
+    }
+
+    // MelonPreferences can't list keys that have no entry yet, so read the cfg directly.
+    private void LoadUnknownItemsFromCfg()
+    {
+        string cfgPath = Path.Combine(MelonEnvironment.UserDataDirectory, "MelonPreferences.cfg");
+        if (!File.Exists(cfgPath))
+            return;
+
+        bool inSection = false;
+        foreach (string line in File.ReadLines(cfgPath))
+        {
+            string trimmed = line.Trim();
+            if (trimmed.StartsWith("["))
             {
-                _logger.Msg($"[Debug] {message}");
-            }
-        }
-
-        public void Reload()
-        {
-            TrashItems = [];
-
-            var fields = typeof(ConfigData)
-                .GetFields(BindingFlags.Public | BindingFlags.Static)
-                .Where(f => f.FieldType == typeof(MelonPreferences_Entry<bool>));
-
-            foreach (var field in fields)
-            {
-                var entry = (MelonPreferences_Entry<bool>)field.GetValue(null);
-                if (entry != null)
-                {
-                    TrashItems[entry.Identifier] = entry.Value;
-                }
+                inSection = trimmed == $"[{UnknownCategoryId}]";
+                continue;
             }
 
-            // Vanilla entries win: an id present in both categories is one mid-migration.
-            foreach (var entry in UnknownItems.Entries)
-            {
-                if (
-                    entry is MelonPreferences_Entry<bool> boolEntry
-                    && !TrashItems.ContainsKey(boolEntry.Identifier)
-                )
-                {
-                    TrashItems[boolEntry.Identifier] = boolEntry.Value;
-                }
-            }
-        }
+            int eq = trimmed.IndexOf('=');
+            if (!inSection || trimmed.StartsWith("#") || eq <= 0)
+                continue;
 
-        public void ScanTrashPrefabs(string[] ids)
-        {
-            Log($"prefab scan: TrashManager exposes {ids.Length} ids [{string.Join(", ", ids)}]");
+            string id = trimmed[..eq].Trim();
 
-            foreach (string id in ids)
+            // Promoted to vanilla since it was auto-detected.
+            if (_entries.ContainsKey(id))
             {
-                AddUnknownItem(id);
-            }
-        }
-
-        public void AddUnknownItem(string id)
-        {
-            if (TrashItems.ContainsKey(id))
-            {
-                return;
+                _unknownCategory.DeleteEntry(id);
+                _logger.Msg($"Migrated '{id}' from Modded/Unknown to Vanilla Trash.");
+                continue;
             }
 
-            MelonPreferences_Entry<bool> entry = CreateUnknownEntry(id);
-            TrashItems[id] = entry.Value;
-            MelonPreferences.Save();
-            _logger.Warning(
-                $"Auto-detected unknown trash item '{id}' - added to config (default: off). Enable it in your mod manager."
-            );
+            AddEntry(_unknownCategory, id, id, false);
         }
+    }
 
-        private void LoadUnknownItemsFromCfg()
-        {
-            string cfgPath = Path.Combine(
-                System.Environment.CurrentDirectory,
-                "UserData",
-                "MelonPreferences.cfg"
-            );
-            if (!File.Exists(cfgPath))
-                return;
-
-            bool inSection = false;
-            foreach (string line in File.ReadLines(cfgPath))
-            {
-                string trimmed = line.Trim();
-                if (trimmed.StartsWith("["))
-                {
-                    inSection = trimmed == "[NoMoreTrash-Shroom_Unknown]";
-                    continue;
-                }
-                if (!inSection || string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("#"))
-                    continue;
-
-                int eq = trimmed.IndexOf('=');
-                if (eq <= 0)
-                    continue;
-
-                string id = trimmed.Substring(0, eq).Trim();
-                if (string.IsNullOrEmpty(id))
-                    continue;
-
-                // An item auto-detected on an older version may since have been promoted to a
-                // vanilla entry. Drop the stale unknown copy instead of registering a duplicate
-                // that would shadow the vanilla one in Reload().
-                if (ClearTrash.HasEntry(id))
-                {
-                    UnknownItems.DeleteEntry(id);
-                    _logger.Msg($"Migrated '{id}' from Modded/Unknown to Vanilla Trash.");
-                    continue;
-                }
-
-                CreateUnknownEntry(id);
-            }
-        }
-
-        private MelonPreferences_Entry<bool> CreateUnknownEntry(string id)
-        {
-            MelonPreferences_Entry<bool> entry = UnknownItems.CreateEntry(
-                id,
-                false,
-                id,
-                $"ID: {id}"
-            );
-            entry.OnEntryValueChanged.Subscribe(
-                (oldValue, newValue) =>
-                {
-                    TrashItems[entry.Identifier] = newValue;
-                    _logger.Msg($"{entry.DisplayName} changed: {oldValue} -> {newValue}");
-                }
-            );
-            return entry;
-        }
-
-        private void SubscribeToChanges()
-        {
-            var fields = typeof(ConfigData)
-                .GetFields(BindingFlags.Public | BindingFlags.Static)
-                .Where(f => f.FieldType == typeof(MelonPreferences_Entry<bool>));
-
-            foreach (var field in fields)
-            {
-                var entry = (MelonPreferences_Entry<bool>)field.GetValue(null);
-                if (entry != null)
-                {
-                    entry.OnEntryValueChanged.Subscribe(
-                        (oldValue, newValue) =>
-                        {
-                            TrashItems[entry.Identifier] = newValue;
-                            _logger.Msg($"{entry.DisplayName} changed: {oldValue} -> {newValue}");
-                        }
-                    );
-                }
-            }
-        }
+    // Not a record: netstandard2.1 lacks IsExternalInit.
+    private sealed class TrashType(string id, string name, bool loadOnly = false)
+    {
+        public string Id { get; } = id;
+        public string Name { get; } = name;
+        public bool LoadOnly { get; } = loadOnly;
     }
 }
