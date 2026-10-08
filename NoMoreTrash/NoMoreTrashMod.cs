@@ -6,8 +6,12 @@ using MelonLoader;
 using NoMoreTrash;
 using UnityEngine;
 #if Mono
+using ScheduleOne.DevUtilities;
+using ScheduleOne.Persistence;
 using ScheduleOne.Trash;
 #elif IL2CPP
+using Il2CppScheduleOne.DevUtilities;
+using Il2CppScheduleOne.Persistence;
 using Il2CppScheduleOne.Trash;
 #endif
 
@@ -127,6 +131,16 @@ namespace NoMoreTrash
                     return;
                 }
 
+                // BeerPongBallSpawner respawns its ball through this same funnel whenever it goes
+                // missing, so destroying it live loops forever. Only clear strays from the save.
+                if (value && __instance.ID == ConfigData.BeerPongBallId && !IsLoadingSaveData())
+                {
+                    ConfigData.Log(
+                        $"spawn: keeping '{__instance.ID}' (beer pong ball, not loading)"
+                    );
+                    return;
+                }
+
                 if (value)
                 {
                     ConfigData.Log($"spawn: destroying '{__instance.ID}'");
@@ -137,6 +151,15 @@ namespace NoMoreTrash
                     ConfigData.Log($"spawn: keeping '{__instance.ID}' (disabled in config)");
                 }
             }
+        }
+
+        // TrashLoader only runs in LoadingData. IsLoading would be too wide: the server is already
+        // up before it, so the spawner's own first balls would get destroyed too.
+        private static bool IsLoadingSaveData()
+        {
+            return Singleton<LoadManager>.InstanceExists
+                && Singleton<LoadManager>.Instance.LoadStatus
+                    == LoadManager.ELoadStatus.LoadingData;
         }
 
         // --- Mod Manager Support ---

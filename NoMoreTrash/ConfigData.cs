@@ -48,7 +48,9 @@ namespace NoMoreTrash
         public static MelonPreferences_Entry<bool> Addy;
         public static MelonPreferences_Entry<bool> Phosphorus;
         public static MelonPreferences_Entry<bool> Substratebag;
-        public static MelonPreferences_Entry<bool> Tabletennisball;
+        public static MelonPreferences_Entry<bool> BeerPongBall;
+
+        public const string BeerPongBallId = "tabletennisball";
 
         public Dictionary<string, bool> TrashItems;
 
@@ -110,11 +112,11 @@ namespace NoMoreTrash
             Phosphorus = CreateVanillaEntry("phosphorus", "Phosphorus");
             Substratebag = CreateVanillaEntry("substratebag", "Mushroom Substrate");
 
-            // New in 0.4.7. Defaults off until the spawn locations are known.
-            Tabletennisball = CreateVanillaEntry(
-                "tabletennisball",
-                "Table Tennis Ball",
-                defaultValue: false
+            // New in 0.4.7. Prefab id is "tabletennisball", but it is the beer pong ball.
+            BeerPongBall = CreateVanillaEntry(
+                BeerPongBallId,
+                "Beer Pong Ball",
+                note: "Only stray balls are cleared, while a save loads. The table's ball is never touched."
             );
 
             LoadUnknownItemsFromCfg();
@@ -128,10 +130,12 @@ namespace NoMoreTrash
         private static MelonPreferences_Entry<bool> CreateVanillaEntry(
             string id,
             string displayName,
-            bool defaultValue = true
+            bool defaultValue = true,
+            string note = null
         )
         {
-            return ClearTrash.CreateEntry(id, defaultValue, displayName, $"ID: {id}");
+            string description = note == null ? $"ID: {id}" : $"ID: {id} - {note}";
+            return ClearTrash.CreateEntry(id, defaultValue, displayName, description);
         }
 
         public void Log(string message)
