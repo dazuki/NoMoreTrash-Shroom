@@ -31,18 +31,20 @@
     <Platforms>AnyCPU;x64</Platforms>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <NoWarn>$(NoWarn);NU1701</NoWarn>
+    <!-- LavaGang.MelonLoader 0.7.3 has broken/net8+ transitive deps; compile-only, nothing ships -->
+    <NoWarn>$(NoWarn);NU1701;NU1603;NU1605</NoWarn>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
   <!-- Mono Configuration (netstandard2.1) -->
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-    <NoWarn>$(NoWarn);NU1605;CS1701;CS1702;MSB3277</NoWarn>
+    <NoWarn>$(NoWarn);CS1701;CS1702;MSB3277</NoWarn>
     <DefineConstants>Mono</DefineConstants>
     <TargetName>NoMoreTrash.Mono</TargetName>
   </PropertyGroup>
   <!-- IL2CPP Configuration (net6.0) -->
   <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <NoWarn>$(NoWarn);NU1605;CS1701;CS1702;MSB3277</NoWarn>
+    <NoWarn>$(NoWarn);CS1701;CS1702;MSB3277</NoWarn>
     <DefineConstants>IL2CPP</DefineConstants>
     <TargetName>NoMoreTrash.Il2cpp</TargetName>
   </PropertyGroup>
@@ -203,7 +205,7 @@
     <Compile Include="NoMoreTrashMod.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="LavaGang.MelonLoader" Version="0.7.0" />
+    <PackageReference Include="LavaGang.MelonLoader" Version="0.7.3" />
   </ItemGroup>
   <PropertyGroup>
     <ReleaseDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\Releases'))</ReleaseDir>
