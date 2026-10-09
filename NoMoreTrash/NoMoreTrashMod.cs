@@ -16,7 +16,7 @@ using Il2CppScheduleOne.Trash;
 [assembly: MelonInfo(
     typeof(NoMoreTrashMod),
     "NoMoreTrash-Shroom",
-    "1.0.8",
+    "1.0.9",
     "Voidane (Fork by dazuki)"
 )]
 [assembly: MelonGame("TVGS", "Schedule I")]
